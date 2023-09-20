@@ -1,0 +1,37 @@
+.game-board {
+    display: grid;
+    grid-template-rows: repeat(10, 80px);
+    grid-template-columns: repeat(10, 80px);
+    justify-content: center;
+    gap: 4px;
+}
+
+.game-container {
+    display: flex;
+    /* Use flexbox to arrange left and right containers */
+}
+
+.left-content {
+    flex: 1;
+    /* Let it grow to take available space */
+    padding: 20px;
+    /* Add padding or adjust as needed */
+    /* Add other styles for your left content here */
+}
+
+.game-board {
+    flex: 2;
+    /* Make it twice as wide as the left content */
+    /* Add other styles for your game board here */
+}
+
+.box {
+    border: 4px solid brown;
+    margin: 4px;
+    width: 80px;
+    height: 80px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
