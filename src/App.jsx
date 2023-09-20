@@ -1,3 +1,4 @@
+// App.js
 import "./App.css";
 import Grid from "./components/Grid";
 
