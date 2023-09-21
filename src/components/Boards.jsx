@@ -24,6 +24,44 @@ export class Boards {
     return grid.map((row) => [...row]);
   }
 
+  generateRandomGrid() {
+    // const characters = ["S", "W", "P", "G", "A"];
+    const grid = [];
+
+    let wumpusCount = 0;
+    let goldCount = 0;
+    let pitCount = 0;
+
+    for (let i = 0; i < this.GRID_SIZE; i++) {
+      const row = [];
+      for (let j = 0; j < this.GRID_SIZE; j++) {
+        let randomChar = "S"; // Default to "S"
+
+        // Place the agent in the bottom-left corner
+        if (i === this.GRID_SIZE - 1 && j === 0) {
+          randomChar = "A";
+        } else {
+          // Generate random values for other cells
+          if (wumpusCount < 3 && Math.random() < 0.1) {
+            randomChar = "W"; // Up to three wumpus
+            wumpusCount++;
+          } else if (goldCount < 3 && Math.random() < 0.1) {
+            randomChar = "G"; // Up to three gold
+            goldCount++;
+          } else if (pitCount < 10 && Math.random() < 0.2) {
+            randomChar = "P"; // Up to 10 pits
+            pitCount++;
+          }
+        }
+
+        row.push(randomChar);
+      }
+      grid.push(row);
+    }
+
+    return grid;
+  }
+
   getBoard() {
     return this.grid;
   }

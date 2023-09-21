@@ -21,6 +21,7 @@ const Grid = () => {
 
   const moveAgent = async () => {
     setPlayMode(true);
+    console.log(boards.generateRandomGrid());
 
     //! this is must to recursively run the agent after specific interval
     async function makeNextMove() {
