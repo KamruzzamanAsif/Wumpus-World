@@ -14,8 +14,9 @@ const Grid = () => {
   }
 
   function resetBoard() {
-    setBoard(boards.initialGrid);
-    setPlayMode(!playmode);
+    setBoard([...boards.initialGrid]);
+    boards.resetBoard();
+    setPlayMode(false);
   }
 
   const moveAgent = async () => {
@@ -50,9 +51,9 @@ const Grid = () => {
 
   //! Configured the Board for View [Dont' Dare to touch it]
   const grid = [];
-  for (let r = 0; r < 9; r++) {
+  for (let r = 0; r < 10; r++) {
     const row = [];
-    for (let c = 0; c < 9; c++) {
+    for (let c = 0; c < 10; c++) {
       row.push(board[c][r]);
     }
     grid.push(row);
@@ -73,11 +74,11 @@ const Grid = () => {
         <div>
           {!playmode ? (
             <button className="cheatBtn" onClick={moveAgent}>
-              Start
+              Play
             </button>
           ) : (
             <button disabled className="cheatBtn" onClick={moveAgent}>
-              Start
+              Play
             </button>
           )}
 

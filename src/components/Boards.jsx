@@ -10,10 +10,11 @@ export class Boards {
       ["S", "S", "S", "S", "G", "S", "S", "S", "S", "S"],
       ["S", "S", "S", "S", "S", "S", "P", "S", "S", "S"],
       ["S", "P", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "P", "S", "S", "S", "S"],
       ["S", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
-      ["S", "G", "S", "P", "S", "S", "S", "S", "S", "P"],
-      ["A", "S", "S", "S", "P", "S", "S", "S", "S", "S"],
-      ["S", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
+      ["S", "S", "S", "P", "S", "S", "S", "S", "S", "P"],
+      ["S", "S", "S", "S", "P", "S", "S", "S", "G", "S"],
+      ["A", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
     ];
 
     this.grid = this.deepCopy(this.initialGrid);
@@ -25,6 +26,11 @@ export class Boards {
 
   getBoard() {
     return this.grid;
+  }
+
+  resetBoard() {
+    // without deep copy, we can't reset the board state
+    this.grid = this.deepCopy(this.initialGrid);
   }
 
   getCurrentPosition(element) {
@@ -50,16 +56,16 @@ export class Boards {
     // Ensure the current position is within bounds
     if (
       current_x >= 0 &&
-      current_x < this.GRID_SIZE - 1 &&
+      current_x < this.GRID_SIZE &&
       current_y >= 0 &&
-      current_y < this.GRID_SIZE - 1
+      current_y < this.GRID_SIZE
     ) {
       // Ensure the target position is within bounds
       if (
         target_x >= 0 &&
-        target_x < this.GRID_SIZE - 1 &&
+        target_x < this.GRID_SIZE &&
         target_y >= 0 &&
-        target_y < this.GRID_SIZE - 1
+        target_y < this.GRID_SIZE
       ) {
         // Swap the current position with the target position
         const temp = gameBoard[current_x][current_y];

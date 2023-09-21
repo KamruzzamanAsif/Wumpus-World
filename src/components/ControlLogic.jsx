@@ -25,7 +25,7 @@ export function move() {
 
   const { rowIndex, colIndex } = board.getCurrentPosition("A");
   const randomMove = Math.floor(Math.random() * 4);
-  console.log("RAND: ", randomMove);
+  console.log("Cur: ", rowIndex, colIndex);
 
   switch (randomMove) {
     case 0:
