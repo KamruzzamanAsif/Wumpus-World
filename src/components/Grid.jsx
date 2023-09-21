@@ -1,34 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Grid.css";
 import { boards } from "./Boards";
 import Cell from "./Cell";
-import { move } from "./Play";
+import { move } from "./ControlLogic";
 
 const Grid = () => {
-  // cheat mode
   const [cheatMode, setCheatMode] = useState(true);
+  const [board, setBoard] = useState(boards.getBoard());
+  const [playmode, setPlayMode] = useState(false);
+
   function toggleCheatMode() {
     setCheatMode(!cheatMode);
   }
 
-  // move
-  const moveAgent = () => {
-    console.log("start");
-    move();
+  function resetBoard() {
+    setBoard(boards.initialGrid);
+    setPlayMode(!playmode);
+  }
+
+  const moveAgent = async () => {
+    setPlayMode(true);
+
+    //! this is must to recursively run the agent after specific interval
+    async function makeNextMove() {
+      if (isMoving > 0) {
+        // move logics
+        move();
+
+        setBoard([...boards.getBoard()]);
+        isMoving = isMoving - 1;
+
+        // Wait for a short period before making the next move
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Make the next move
+        makeNextMove();
+      }
+    }
+
+    // TODO: Later it should be infinite until game is over
+    let isMoving = 15;
+    makeNextMove();
   };
 
-  // ONLY FOR VIEW PURPOSE, DONT TOUCH IT ------
+  // re-render the UI when agent make move
+  useEffect(() => {
+    setBoard([...boards.getBoard()]);
+  }, []);
+
+  //! Configured the Board for View [Dont' Dare to touch it]
   const grid = [];
-  const board = boards.getBoard();
   for (let r = 0; r < 9; r++) {
     const row = [];
     for (let c = 0; c < 9; c++) {
-      // const cellID = r * 10 + c;
       row.push(board[c][r]);
     }
     grid.push(row);
   }
-  // ONLY FOR VIEW PURPOSE, DONT TOUCH IT ------
 
   // view
   return (
@@ -43,8 +71,18 @@ const Grid = () => {
         }}
       >
         <div>
-          <button className="playBtn cheatBtn" onClick={moveAgent}>
-            Start
+          {!playmode ? (
+            <button className="cheatBtn" onClick={moveAgent}>
+              Start
+            </button>
+          ) : (
+            <button disabled className="cheatBtn" onClick={moveAgent}>
+              Start
+            </button>
+          )}
+
+          <button className="cheatBtn" onClick={resetBoard}>
+            Reset
           </button>
         </div>
         <div className="cheatSection">
