@@ -1,57 +1,64 @@
-// src/components/Grid.js
 import { useState } from "react";
-import "../styles/Grid.css"; // Import your CSS file
+import "../styles/Grid.css";
+import { boards } from "./Boards";
 import Cell from "./Cell";
+import { move } from "./Play";
 
 const Grid = () => {
-  const GRID_SIZE = 10;
-
+  // cheat mode
   const [cheatMode, setCheatMode] = useState(true);
-
-  function toogleCheatMode() {
+  function toggleCheatMode() {
     setCheatMode(!cheatMode);
   }
 
-  // input matrix
-  const input = [
-    ["S", "S", "S", "S", "S", "S", "S", "S", "P", "S"],
-    ["S", "S", "W", "S", "S", "S", "W", "S", "S", "S"],
-    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
-    ["S", "S", "S", "S", "G", "S", "S", "S", "S", "S"],
-    ["S", "S", "S", "S", "S", "S", "P", "S", "S", "S"],
-    ["S", "P", "S", "S", "S", "S", "S", "S", "S", "S"],
-    ["S", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
-    ["S", "S", "S", "P", "S", "S", "S", "S", "S", "P"],
-    ["P", "S", "S", "S", "P", "S", "S", "S", "S", "S"],
-    ["A", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
-  ];
+  // move
+  const moveAgent = () => {
+    console.log("start");
+    move();
+  };
 
-  // populate grid matrix
+  // ONLY FOR VIEW PURPOSE, DONT TOUCH IT ------
   const grid = [];
-  for (let r = 0; r < GRID_SIZE; r++) {
+  const board = boards.getBoard();
+  for (let r = 0; r < 9; r++) {
     const row = [];
-    for (let c = 0; c < GRID_SIZE; c++) {
-      // const cellID = c * GRID_SIZE + r;
-      row.push(input[c][r]);
+    for (let c = 0; c < 9; c++) {
+      // const cellID = r * 10 + c;
+      row.push(board[c][r]);
     }
     grid.push(row);
   }
+  // ONLY FOR VIEW PURPOSE, DONT TOUCH IT ------
 
+  // view
   return (
     <div className="game-container">
-      <div className="left-content">
-        <p style={{ marginRight: "5px", marginTop: "1rem" }}>Cheat Mode: </p>
-        {/* TODO: Button style */}
-        <button className="cheatBtn" onClick={toogleCheatMode}>
-          {cheatMode ? "Disable" : "Enable"}
-        </button>
+      <div
+        className="left-content"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div>
+          <button className="playBtn cheatBtn" onClick={moveAgent}>
+            Start
+          </button>
+        </div>
+        <div className="cheatSection">
+          <button className="cheatBtn" onClick={toggleCheatMode}>
+            {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
+          </button>
+        </div>
       </div>
 
       <div className="game-board">
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex}>
-            {row.map((cell, cellid) => (
-              <div key={cellid} className="box">
+        {grid.map((col, colIndex) => (
+          <div key={colIndex} className="row">
+            {col.map((cell, rowIndex) => (
+              <div key={rowIndex} className="box">
                 <Cell id={cell} cheatMode={cheatMode} />
               </div>
             ))}

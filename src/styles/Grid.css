@@ -13,26 +13,34 @@
 }
 
 .left-content {
-    border: 2px solid red;
+    /* border: 2px solid red; */
     display: flex;
     width: 30vw;
-    /* Let it grow to take available space */
-    padding: 10px;
-    /* Add padding or adjust as needed */
-    /* Add other styles for your left content here */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-board {
+    /* border: 2px solid blue; */
+    width: 70vw;
+    /* Make it twice as wide as the left content */
+    /* Add other styles for your game board here */
 }
 
 .cheatBtn {
-    width: 5rem;
+    width: 8rem;
     height: 2rem;
     margin-top: .6rem;
 }
 
-.game-board {
-    border: 2px solid blue;
-    width: 70vw;
-    /* Make it twice as wide as the left content */
-    /* Add other styles for your game board here */
+
+.cheatSection {
+    height: 50vh;
+}
+
+.playBtnSection {
+    height: 50vh;
 }
 
 .box {
