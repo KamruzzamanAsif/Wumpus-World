@@ -32,6 +32,8 @@ export function move() {
   const board = boards;
 
   const { rowIndex, colIndex } = board.getCurrentPosition("A");
+
+  // TODO: We have to replace this random move with Logical Move 
   const randomMove = Math.floor(Math.random() * 4);
 
   newMove();

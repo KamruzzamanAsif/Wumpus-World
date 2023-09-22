@@ -25,7 +25,8 @@ const Grid = () => {
     //! this is must to recursively run the agent after specific interval
     async function makeNextMove() {
       if (isMoving > 0) {
-        // move logics
+        
+        //! move logics
         move();
 
         setBoard([...boards.getBoard()]);

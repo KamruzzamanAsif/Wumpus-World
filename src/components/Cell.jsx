@@ -26,7 +26,7 @@ function Cell({ id, cheatMode }) {
     imageSize = 50;
   }
 
-  // in future, when a cell is visited, it should also be uncovered
+  // TODO: in future, when a cell is visited, it should also be uncovered (Fahad)
 
   return (
     // load relevant image

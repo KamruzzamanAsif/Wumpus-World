@@ -105,7 +105,8 @@ export class Boards {
     // Check if the cell is within the bounds of the board
     if (x >= 0 && x < this.BOARD_SIZE && y >= 0 && y < this.BOARD_SIZE) {
       // Check if the cell is safe (no Wumpus or pit)
-      // TODO: Mark Breez or Stench for P or W
+      // TODO: Mark Breez or Stench for P or W (Fahad - UI)
+      // TODO: Use inferential Logic here
       if (board[x][y] !== "W" && board[x][y] !== "P") {
         return true;
       }
@@ -113,10 +114,13 @@ export class Boards {
     return false;
   };
 
+  // TODO: Find safe cell based on Inferential logic and Probabilistic Logic
   findSafeCells(current_x, current_y) {
     const safeCells = [];
 
     // Check the four adjacent cells for safety
+    //! CHEATING...
+    //? We need to sort out possible Pit or Wumpus without acc
     const directions = [
       [current_x + 1, current_y],
       [current_x - 1, current_y],
