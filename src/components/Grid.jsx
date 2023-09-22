@@ -21,7 +21,6 @@ const Grid = () => {
 
   const moveAgent = async () => {
     setPlayMode(true);
-    console.log(boards.generateRandomGrid());
 
     //! this is must to recursively run the agent after specific interval
     async function makeNextMove() {
@@ -90,6 +89,15 @@ const Grid = () => {
         <div className="cheatSection">
           <button className="cheatBtn" onClick={toggleCheatMode}>
             {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
+          </button>
+          <button
+            className="cheatBtn"
+            onClick={() => {
+              boards.setRandomBoard();
+              setBoard([...boards.getBoard()]);
+            }}
+          >
+            Generate Board
           </button>
         </div>
       </div>

@@ -59,11 +59,22 @@ export class Boards {
       grid.push(row);
     }
 
+    console.log("GRID: ", this.grid);
+    this.grid = this.deepCopy(grid);
+    this.initialGrid = this.deepCopy(grid);
+    console.log("New ", grid);
+
     return grid;
   }
 
   getBoard() {
     return this.grid;
+  }
+
+  setRandomBoard() {
+    const newRandomBoard = this.generateRandomGrid();
+    this.initialGrid = newRandomBoard;
+    this.grid = this.deepCopy(newRandomBoard);
   }
 
   resetBoard() {
