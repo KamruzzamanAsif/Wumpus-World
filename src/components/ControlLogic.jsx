@@ -20,12 +20,21 @@ export function isValidMove(board_x, board_y, current_x, current_y) {
   return isValid;
 }
 
+export function newMove() {
+  const { rowIndex, colIndex } = boards.getCurrentPosition("A");
+  const safeCells = boards.findSafeCells(rowIndex, colIndex);
+  console.log(boards.getBoard());
+  console.log("CUR: ", { rowIndex, colIndex });
+  console.log("SAFE: ", safeCells);
+}
+
 export function move() {
   const board = boards;
 
   const { rowIndex, colIndex } = board.getCurrentPosition("A");
   const randomMove = Math.floor(Math.random() * 4);
-  console.log("Cur: ", rowIndex, colIndex);
+
+  newMove();
 
   switch (randomMove) {
     case 0:
