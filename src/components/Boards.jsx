@@ -115,27 +115,100 @@ export class Boards {
   };
 
   // TODO: Find safe cell based on Inferential logic and Probabilistic Logic
+  // findSafeCells(current_x, current_y) {
+  //   const safeCells = [];
+
+  //   // Check the four adjacent cells for safety
+  //   //! CHEATING...
+  //   //? We need to sort out possible Pit or Wumpus without acc
+  //   const directions = [
+  //     [current_x + 1, current_y],
+  //     [current_x - 1, current_y],
+  //     [current_x, current_y + 1],
+  //     [current_x, current_y - 1],
+  //   ];
+
+  //   for (const [new_x, new_y] of directions) {
+  //     if (this.isValidAndSafe(new_x, new_y)) {
+  //       safeCells.push({ new_x, new_y });
+  //     }
+  //   }
+
+  //   return safeCells;
+  // }
+
   findSafeCells(current_x, current_y) {
     const safeCells = [];
+    const board = this.getBoard();
+    const BOARD_SIZE = this.BOARD_SIZE;
 
-    // Check the four adjacent cells for safety
-    //! CHEATING...
-    //? We need to sort out possible Pit or Wumpus without acc
-    const directions = [
-      [current_x + 1, current_y],
-      [current_x - 1, current_y],
-      [current_x, current_y + 1],
-      [current_x, current_y - 1],
-    ];
+    // Create a 2D array to represent the probabilities of hazards in each cell
+    const hazardProbabilities = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
 
-    for (const [new_x, new_y] of directions) {
-      if (this.isValidAndSafe(new_x, new_y)) {
-        safeCells.push({ new_x, new_y });
+    // Update hazard probabilities based on sensory information
+    for (let x = 0; x < BOARD_SIZE; x++) {
+      for (let y = 0; y < BOARD_SIZE; y++) {
+        if (!this.isValidAndSafe(x, y)) {
+          // Skip cells that are not safe
+          continue;
+        }
+
+        if (board[x][y] === 'S') {
+          // Update probability of a wumpus based on stench
+          hazardProbabilities[x][y] += 0.3; // Adjust this value based on game balance
+        }
+
+        if (board[x][y] === 'P') {
+          // Update probability of a pit based on breeze
+          hazardProbabilities[x][y] += 0.3; // Adjust this value based on game balance
+        }
+      }
+    }
+
+    // Check for stench and breeze in the current cell
+    const hasStench = board[current_x][current_y] === 'S';
+    const hasBreeze = board[current_x][current_y] === 'P';
+
+    // Rules for deducing wumpuses and pits
+    if (hasStench) {
+      // If there's a stench in the current cell, it's a potential wumpus location
+      // Consider adjacent cells with lower wumpus probability as safe
+      const directions = [
+        [current_x + 1, current_y],
+        [current_x - 1, current_y],
+        [current_x, current_y + 1],
+        [current_x, current_y - 1],
+      ];
+
+      for (const [new_x, new_y] of directions) {
+        if (this.isValidAndSafe(new_x, new_y) && hazardProbabilities[new_x][new_y] < 0.5) {
+          // If the wumpus probability is low, the cell is safe
+          safeCells.push({ new_x, new_y });
+        }
+      }
+    }
+
+    if (hasBreeze) {
+      // If there's a breeze in the current cell, it's a potential pit location
+      // Consider adjacent cells with lower pit probability as safe
+      const directions = [
+        [current_x + 1, current_y],
+        [current_x - 1, current_y],
+        [current_x, current_y + 1],
+        [current_x, current_y - 1],
+      ];
+
+      for (const [new_x, new_y] of directions) {
+        if (this.isValidAndSafe(new_x, new_y) && hazardProbabilities[new_x][new_y] < 0.5) {
+          // If the pit probability is low, the cell is safe
+          safeCells.push({ new_x, new_y });
+        }
       }
     }
 
     return safeCells;
   }
+  
 
   makeMove(target_x, target_y, current_x, current_y) {
     const gameBoard = this.getBoard();
