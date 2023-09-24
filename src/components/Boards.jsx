@@ -1,20 +1,32 @@
-// src/components/Boards.js
+/* *** Notations ***
+
+  S - (S)afe Cell
+  W - (W)umpus
+  A - (A)gent
+  G - (G)old
+  P - (P)it
+  T - S(t)ench
+  B - (B)reeze
+  U - Both (Stech U Breeze) [ignore for now]
+
+ */
 
 export class Boards {
   constructor() {
     this.BOARD_SIZE = 10;
+    this.modifiedCells = new Set();
 
     this.initialGrid = [
-      ["S", "S", "S", "S", "S", "S", "S", "S", "P", "S"],
-      ["S", "S", "W", "S", "S", "S", "W", "S", "S", "S"],
-      ["S", "S", "S", "S", "G", "S", "S", "S", "S", "S"],
-      ["S", "S", "S", "S", "S", "S", "P", "S", "S", "S"],
-      ["S", "P", "S", "S", "S", "S", "S", "S", "S", "S"],
-      ["S", "S", "S", "S", "S", "P", "S", "S", "S", "S"],
-      ["S", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
-      ["S", "S", "S", "P", "S", "S", "S", "S", "S", "P"],
-      ["S", "S", "S", "S", "P", "S", "S", "S", "G", "S"],
-      ["A", "S", "S", "S", "S", "W", "S", "S", "S", "S"],
+      ["S", "S", "T", "S", "S", "S", "T", "B", "P", "B"],
+      ["S", "T", "W", "T", "S", "T", "W", "T", "B", "S"],
+      ["S", "S", "T", "S", "G", "S", "T", "S", "S", "S"],
+      ["S", "B", "S", "S", "S", "S", "P", "S", "S", "S"],
+      ["B", "P", "B", "S", "S", "B", "S", "S", "S", "S"],
+      ["S", "B", "S", "S", "B", "P", "B", "S", "S", "S"],
+      ["S", "S", "S", "B", "T", "W", "T", "S", "S", "B"],
+      ["S", "S", "B", "P", "B", "T", "S", "S", "B", "P"],
+      ["S", "S", "S", "B", "P", "B", "S", "S", "G", "B"],
+      ["A", "S", "S", "S", "B", "W", "S", "S", "S", "S"],
     ];
 
     this.grid = this.deepCopy(this.initialGrid);
@@ -24,9 +36,36 @@ export class Boards {
     return grid.map((row) => [...row]);
   }
 
-  generateRandomGrid() {
+  addPercept(board) {
+    const directions = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ];
+
+    for (let i = 0; i < this.BOARD_SIZE; i++) {
+      for (let j = 0; j < this.BOARD_SIZE; j++) {
+        const currentCell = board[i][j];
+
+        if (currentCell === "W" || currentCell === "P") {
+          directions.forEach(([dx, dy]) => {
+            const ni = i + dx;
+            const nj = j + dy;
+            if (this.isValidAndSafe(ni, nj)) {
+              board[ni][nj] = currentCell === "W" ? "T" : "B";
+            }
+          });
+        }
+      }
+    }
+
+    return board;
+  }
+
+  generateRandomBoard() {
     // const characters = ["S", "W", "P", "G", "A"];
-    const grid = [];
+    let grid = [];
 
     let wumpusCount = 0;
     let goldCount = 0;
@@ -48,7 +87,7 @@ export class Boards {
           } else if (goldCount < 3 && Math.random() < 0.1) {
             randomChar = "G"; // Up to three gold
             goldCount++;
-          } else if (pitCount < 10 && Math.random() < 0.2) {
+          } else if (pitCount < 5 && Math.random() < 0.2) {
             randomChar = "P"; // Up to 10 pits
             pitCount++;
           }
@@ -59,11 +98,12 @@ export class Boards {
       grid.push(row);
     }
 
-    console.log("GRID: ", this.grid);
+    // console.log("GRID: ", this.grid);
     this.grid = this.deepCopy(grid);
     this.initialGrid = this.deepCopy(grid);
-    console.log("New ", grid);
+    // console.log("New ", grid);
 
+    grid = this.addPercept(grid);
     return grid;
   }
 
@@ -72,7 +112,7 @@ export class Boards {
   }
 
   setRandomBoard() {
-    const newRandomBoard = this.generateRandomGrid();
+    const newRandomBoard = this.generateRandomBoard();
     this.initialGrid = newRandomBoard;
     this.grid = this.deepCopy(newRandomBoard);
   }
@@ -118,7 +158,7 @@ export class Boards {
   // findSafeCells(current_x, current_y) {
   //   const safeCells = [];
 
-  //   // Check the four adjacent cells for safety
+  // Check the four adjacent cells for safety
   //   //! CHEATING...
   //   //? We need to sort out possible Pit or Wumpus without acc
   //   const directions = [
@@ -140,10 +180,13 @@ export class Boards {
   findSafeCells(current_x, current_y) {
     const safeCells = [];
     const board = this.getBoard();
+    // console.log("Latest board: ", board);
     const BOARD_SIZE = this.BOARD_SIZE;
 
     // Create a 2D array to represent the probabilities of hazards in each cell
-    const hazardProbabilities = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
+    const hazardProbabilities = Array.from({ length: BOARD_SIZE }, () =>
+      Array(BOARD_SIZE).fill(0)
+    );
 
     // Update hazard probabilities based on sensory information
     for (let x = 0; x < BOARD_SIZE; x++) {
@@ -153,21 +196,21 @@ export class Boards {
           continue;
         }
 
-        if (board[x][y] === 'S') {
+        if (board[x][y] === "T") {
           // Update probability of a wumpus based on stench
           hazardProbabilities[x][y] += 0.3; // Adjust this value based on game balance
         }
 
-        if (board[x][y] === 'P') {
+        if (board[x][y] === "B") {
           // Update probability of a pit based on breeze
-          hazardProbabilities[x][y] += 0.3; // Adjust this value based on game balance
+          hazardProbabilities[x][y] += 0.2; // Adjust this value based on game balance
         }
       }
     }
 
     // Check for stench and breeze in the current cell
-    const hasStench = board[current_x][current_y] === 'S';
-    const hasBreeze = board[current_x][current_y] === 'P';
+    const hasStench = this.initialGrid[current_x][current_y] === "T";
+    const hasBreeze = this.initialGrid[current_x][current_y] === "B";
 
     // Rules for deducing wumpuses and pits
     if (hasStench) {
@@ -181,7 +224,10 @@ export class Boards {
       ];
 
       for (const [new_x, new_y] of directions) {
-        if (this.isValidAndSafe(new_x, new_y) && hazardProbabilities[new_x][new_y] < 0.5) {
+        if (
+          this.isValidAndSafe(new_x, new_y) &&
+          hazardProbabilities[new_x][new_y] < 0.5
+        ) {
           // If the wumpus probability is low, the cell is safe
           safeCells.push({ new_x, new_y });
         }
@@ -199,7 +245,10 @@ export class Boards {
       ];
 
       for (const [new_x, new_y] of directions) {
-        if (this.isValidAndSafe(new_x, new_y) && hazardProbabilities[new_x][new_y] < 0.5) {
+        if (
+          this.isValidAndSafe(new_x, new_y) &&
+          hazardProbabilities[new_x][new_y] < 0.5
+        ) {
           // If the pit probability is low, the cell is safe
           safeCells.push({ new_x, new_y });
         }
@@ -208,21 +257,30 @@ export class Boards {
 
     return safeCells;
   }
-  
 
   makeMove(target_x, target_y, current_x, current_y) {
     const gameBoard = this.getBoard();
 
-    // Check if the target cell is safe
     if (this.isValidAndSafe(target_x, target_y)) {
-      // Move the agent to the target position
-      gameBoard[target_x][target_y] = "A";
-      gameBoard[current_x][current_y] = "S";
+      const targetCell = `${target_x}-${target_y}`;
+      this.modifiedCells.add(targetCell);
 
-      return true; // Move is valid
+      gameBoard[target_x][target_y] = "A";
+      gameBoard[current_x][current_y] = this.getCellState(current_x, current_y);
+      return true;
     } else {
+      // TODO: here we have to make descision if it's wumpus or pit or Bump [bump means invalid move](Abir)
       console.error("Invalid or unsafe move.");
       return false;
+    }
+  }
+
+  getCellState(x, y) {
+    const cellKey = `${x}-${y}`;
+    if (this.modifiedCells.has(cellKey) && this.initialGrid[x][y] != "A") {
+      return this.initialGrid[x][y];
+    } else {
+      return "S";
     }
   }
 }

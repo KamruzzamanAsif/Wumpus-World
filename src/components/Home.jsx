@@ -25,7 +25,6 @@ const Grid = () => {
     //! this is must to recursively run the agent after specific interval
     async function makeNextMove() {
       if (isMoving > 0) {
-        
         //! move logics
         move();
 
@@ -41,7 +40,7 @@ const Grid = () => {
     }
 
     // TODO: Later it should be infinite until game is over
-    let isMoving = 15;
+    let isMoving = 25;
     makeNextMove();
   };
 
