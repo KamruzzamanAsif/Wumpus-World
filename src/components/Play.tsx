@@ -133,7 +133,8 @@ export class Play{
     threshold = 0.5;
     contiguousRandomMoveCount = 0;
     discoveredGold = 0;
-    wumpusKilled = 0;
+    wumpusKilled = 0;    console.log("V: ", this.cellVisited);
+
 
     totalMoves = [
     [0,0,0,0,0,0,0,0,0,0],

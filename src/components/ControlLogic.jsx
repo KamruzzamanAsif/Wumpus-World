@@ -20,15 +20,6 @@ export function isValidMove(board_x, board_y, current_x, current_y) {
   return isValid;
 }
 
-export function advanceMove() {
-  const { rowIndex, colIndex } = boards.getCurrentPosition("A");
-
-  // 1. Safe cell around Wumpus and Pit is found
-  const safeCells = boards.findSafeCells(rowIndex, colIndex);
-
-  return safeCells;
-}
-
 export function move() {
   const board = boards;
   let nextMove = true;
@@ -38,9 +29,10 @@ export function move() {
 
   // TODO: We have to replace this random move with Logical Move
 
-  const safeMove = advanceMove();
+  const safeMove = boards.findSafeCells(rowIndex, colIndex);
 
   if (safeMove.length != 0) {
+    
     let next_x, next_y;
     const size = safeMove.length;
     randomMove = Math.floor(Math.random() * size);
@@ -49,14 +41,16 @@ export function move() {
 
     // next move
     nextMove = board.makeMove(next_x, next_y, rowIndex, colIndex);
-    console.log("CUR: ", board.initialGrid[next_x][next_y]);
+    console.log("CUR: ", next_x, next_y ,board.initialGrid[next_x][next_y]);
 
     if (board.initialGrid[next_x][next_y] == "G") {
       console.log("GOLD FOUND", next_x, next_y);
     }
-  } else {
-    randomMove = Math.floor(Math.random() * 4);
 
+    
+  } else {
+
+    randomMove = Math.floor(Math.random() * 4);
     switch (randomMove) {
       case 0:
         if (isValidMove(rowIndex + 1, colIndex, rowIndex, colIndex)) {

@@ -8,7 +8,6 @@ const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(boards.getBoard());
   const [playmode, setPlayMode] = useState(false);
-  let isGameOver = null;
 
   function toggleCheatMode() {
     setCheatMode(!cheatMode);
@@ -19,31 +18,6 @@ const Grid = () => {
     boards.resetBoard();
     setPlayMode(false);
   }
-
-  // const moveAgent = async () => {
-  //   setPlayMode(true);
-
-  //   //! this is must to recursively run the agent after specific interval
-  //   async function makeNextMove() {
-  //     if (isMoving > 0) {
-  //       //! move logics
-  //       move();
-
-  //       setBoard([...boards.getBoard()]);
-  //       isMoving = isMoving - 1;
-
-  //       // Wait for a short period before making the next move
-  //       await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //       // Make the next move
-  //       makeNextMove();
-  //     }
-  //   }
-
-  //   // TODO: Later it should be infinite until game is over
-  //   let isMoving = 25;
-  //   makeNextMove();
-  // };
 
   const moveAgent = async () => {
     setPlayMode(true);
@@ -62,7 +36,7 @@ const Grid = () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
 
         if (isGameOver) {
-          alert('Game Over')
+          alert("Game Over");
         } else {
           // Make the next move
           makeNextMove();
@@ -71,9 +45,10 @@ const Grid = () => {
     }
 
     // TODO: Later it should be infinite until the game is over
-    let isMoving = 12500;
+    let isMoving = 150;
     let isGameOver = false;
     makeNextMove();
+    console.log(boards.cellVisited);
   };
 
   // re-render the UI when agent make move
@@ -139,7 +114,7 @@ const Grid = () => {
           <div key={colIndex} className="row">
             {col.map((cell, rowIndex) => (
               <div key={rowIndex} className="box">
-                <Cell id={cell} cheatMode={cheatMode} />
+                <Cell id={cell} cheatMode={cheatMode} x={rowIndex} y={colIndex} />
               </div>
             ))}
           </div>

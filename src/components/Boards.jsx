@@ -24,12 +24,34 @@ export class Boards {
       ["B", "P", "B", "S", "S", "B", "B", "S", "S", "S"],
       ["S", "B", "S", "S", "B", "P", "B", "S", "S", "S"],
       ["S", "S", "S", "B", "T", "W", "T", "S", "S", "B"],
-      ["S", "S", "B", "P", "B", "T", "S", "S", "B", "P"],
+      ["S", "G", "B", "P", "B", "T", "S", "S", "B", "P"],
       ["S", "S", "S", "B", "P", "B", "S", "S", "G", "B"],
       ["A", "S", "S", "S", "B", "W", "T", "S", "S", "S"],
     ];
 
+    this.cellVisited = [
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [true, false, false, false, false, false, false, false, false, false],
+    ];
+
     this.grid = this.deepCopy(this.initialGrid);
+  }
+
+  initEnvironment() {
+    // initialize cellvisited array
+    for (let i = 0; i < this.BOARD_SIZE; i++) {
+      for (let j = 0; j < this.BOARD_SIZE; j++) {
+        this.cellVisited[i][j] = false;
+      }
+    }
   }
 
   deepCopy(grid) {
@@ -52,7 +74,7 @@ export class Boards {
           directions.forEach(([dx, dy]) => {
             const ni = i + dx;
             const nj = j + dy;
-            if (this.isValidAndSafe(ni, nj)) {
+            if (this.isValidCell(ni, nj)) {
               board[ni][nj] = currentCell === "W" ? "T" : "B";
             }
           });
@@ -103,6 +125,10 @@ export class Boards {
     this.initialGrid = this.deepCopy(grid);
     // console.log("New ", grid);
 
+    this.initEnvironment();
+
+    console.log("V: ", this.cellVisited);
+
     grid = this.addPercept(grid);
     return grid;
   }
@@ -120,6 +146,7 @@ export class Boards {
   resetBoard() {
     // without deep copy, we can't reset the board state
     this.grid = this.deepCopy(this.initialGrid);
+    this.initEnvironment();
   }
 
   getCurrentPosition(element) {
@@ -139,43 +166,20 @@ export class Boards {
     return { rowIndex, colIndex };
   }
 
-  isValidAndSafe = (x, y) => {
-    const board = this.getBoard();
-
+  isValidCell = (x, y) => {
     // Check if the cell is within the bounds of the board
     if (x >= 0 && x < this.BOARD_SIZE && y >= 0 && y < this.BOARD_SIZE) {
       // Check if the cell is safe (no Wumpus or pit)
-      // TODO: Mark Breez or Stench for P or W (Fahad - UI)
       // TODO: Use inferential Logic here
-      if (board[x][y] !== "W" && board[x][y] !== "P") {
-        return true;
-      }
+      // if (board[x][y] !== "W" && board[x][y] !== "P") {
+      //   return true;
+      // }
+      return true;
     }
     return false;
   };
 
   // TODO: Find safe cell based on Inferential logic and Probabilistic Logic
-  // findSafeCells(current_x, current_y) {
-  //   const safeCells = [];
-
-  // Check the four adjacent cells for safety
-  //   //! CHEATING...
-  //   //? We need to sort out possible Pit or Wumpus without acc
-  //   const directions = [
-  //     [current_x + 1, current_y],
-  //     [current_x - 1, current_y],
-  //     [current_x, current_y + 1],
-  //     [current_x, current_y - 1],
-  //   ];
-
-  //   for (const [new_x, new_y] of directions) {
-  //     if (this.isValidAndSafe(new_x, new_y)) {
-  //       safeCells.push({ new_x, new_y });
-  //     }
-  //   }
-
-  //   return safeCells;
-  // }
 
   findSafeCells(current_x, current_y) {
     const safeCells = [];
@@ -191,7 +195,7 @@ export class Boards {
     // Update hazard probabilities based on sensory information
     for (let x = 0; x < BOARD_SIZE; x++) {
       for (let y = 0; y < BOARD_SIZE; y++) {
-        if (!this.isValidAndSafe(x, y)) {
+        if (!this.isValidCell(x, y)) {
           // Skip cells that are not safe
           continue;
         }
@@ -225,7 +229,7 @@ export class Boards {
 
       for (const [new_x, new_y] of directions) {
         if (
-          this.isValidAndSafe(new_x, new_y) &&
+          this.isValidCell(new_x, new_y) &&
           hazardProbabilities[new_x][new_y] < 0.5
         ) {
           // If the wumpus probability is low, the cell is safe
@@ -246,7 +250,7 @@ export class Boards {
 
       for (const [new_x, new_y] of directions) {
         if (
-          this.isValidAndSafe(new_x, new_y) &&
+          this.isValidCell(new_x, new_y) &&
           hazardProbabilities[new_x][new_y] < 0.5
         ) {
           // If the pit probability is low, the cell is safe
@@ -261,12 +265,16 @@ export class Boards {
   makeMove(target_x, target_y, current_x, current_y) {
     const gameBoard = this.getBoard();
 
-    if (this.isValidAndSafe(target_x, target_y)) {
+    if (this.isValidCell(target_x, target_y)) {
       const targetCell = `${target_x}-${target_y}`;
       this.modifiedCells.add(targetCell);
 
       gameBoard[target_x][target_y] = "A";
       gameBoard[current_x][current_y] = this.getCellState(current_x, current_y);
+
+      // mark the cellvisited array as true
+      this.cellVisited[current_x][current_y] = true;
+
       return true;
     } else {
       // TODO: here we have to make descision if it's wumpus or pit or Bump [bump means invalid move](Abir)
