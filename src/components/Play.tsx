@@ -30,17 +30,25 @@ export class Play{
         Cell types:
         =============
         - safe
-        - stench
-        - breeze
+        - T
+        - B
         - agentsafe
         - agentstinky
-        - agentbreeze
+        - agentB
         - wumpus (blurred)
         - pit (blurred)
         - gold (blurred)
         - agentwumpus
         - agentpit
         - agentgold
+          S - (S)afe Cell
+          W - (W)umpus
+          A - (A)gent
+          G - (G)old
+          P - (P)it
+          T - S(t)ench
+          B - (B)reeze
+          U - Both (Stech U Breeze) [ignore for now]
     */
 
     board = [
@@ -109,7 +117,7 @@ export class Play{
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     ]
       
-    stenchProbability = [
+    TProbability = [
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -170,9 +178,6 @@ export class Play{
         this.init();
     }
 
-
-    
-
     init(){
 
         for(var i=0; i< this.wumpusCount; i++){
@@ -187,16 +192,15 @@ export class Play{
             i = i-1;
             continue;
           }
-          //// console.log(row, col)
           this.board[row][col] = 'W';
           if(col != 0)
-            this.board[row][col-1] = 'stench'
+            this.board[row][col-1] = 'T'
           if(col != 9)
-            this.board[row][col+1] = 'stench'
+            this.board[row][col+1] = 'T'
           if(row != 0)
-            this.board[row-1][col] = 'stench'
+            this.board[row-1][col] = 'T'
           if(row != 9)
-            this.board[row+1][col] = 'stench'
+            this.board[row+1][col] = 'T'
         }
 
         for(var i=0; i< this.pitCount; i++){
@@ -208,32 +212,31 @@ export class Play{
             i=i-1;
             continue;
           }
-          //// console.log(row, col)
           if(this.board[row][col]=='P' || this.board[row][col]=='W'){
             i = i-1;
             continue;
           }
           this.board[row][col] = 'P';
           if(col != 0)
-            if(this.board[row][col-1] == 'stench')
-              this.board[row][col-1] += 'breeze'
+            if(this.board[row][col-1] == 'T')
+              this.board[row][col-1] += 'B'
             else
-              this.board[row][col-1] = 'breeze'
+              this.board[row][col-1] = 'B'
           if(col != 9)
-            if(this.board[row][col+1] == 'stench')
-              this.board[row][col+1] += 'breeze'
+            if(this.board[row][col+1] == 'T')
+              this.board[row][col+1] += 'B'
             else
-              this.board[row][col+1] = 'breeze'
+              this.board[row][col+1] = 'B'
           if(row != 0)
-            if(this.board[row-1][col] == 'stench')
-              this.board[row-1][col] += 'breeze'
+            if(this.board[row-1][col] == 'T')
+              this.board[row-1][col] += 'B'
             else
-              this.board[row-1][col] = 'breeze'
+              this.board[row-1][col] = 'B'
           if(row != 9)
-            if(this.board[row+1][col] == 'stench')
-              this.board[row+1][col] += 'breeze'
+            if(this.board[row+1][col] == 'T')
+              this.board[row+1][col] += 'B'
             else
-              this.board[row+1][col] = 'breeze'
+              this.board[row+1][col] = 'B'
         }
 
         for(var i=0; i< this.goldCount; i++){
