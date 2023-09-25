@@ -20,13 +20,13 @@ export class Boards {
       ["S", "S", "T", "S", "S", "S", "T", "B", "P", "B"],
       ["S", "T", "W", "T", "S", "T", "W", "T", "B", "S"],
       ["S", "S", "T", "S", "G", "S", "T", "S", "S", "S"],
-      ["S", "B", "S", "S", "S", "S", "P", "S", "S", "S"],
-      ["B", "P", "B", "S", "S", "B", "S", "S", "S", "S"],
+      ["S", "B", "S", "S", "S", "B", "P", "B", "S", "S"],
+      ["B", "P", "B", "S", "S", "B", "B", "S", "S", "S"],
       ["S", "B", "S", "S", "B", "P", "B", "S", "S", "S"],
       ["S", "S", "S", "B", "T", "W", "T", "S", "S", "B"],
       ["S", "S", "B", "P", "B", "T", "S", "S", "B", "P"],
       ["S", "S", "S", "B", "P", "B", "S", "S", "G", "B"],
-      ["A", "S", "S", "S", "B", "W", "S", "S", "S", "S"],
+      ["A", "S", "S", "S", "B", "W", "T", "S", "S", "S"],
     ];
 
     this.grid = this.deepCopy(this.initialGrid);
@@ -203,7 +203,7 @@ export class Boards {
 
         if (board[x][y] === "B") {
           // Update probability of a pit based on breeze
-          hazardProbabilities[x][y] += 0.2; // Adjust this value based on game balance
+          hazardProbabilities[x][y] += 0.3; // Adjust this value based on game balance
         }
       }
     }
@@ -270,6 +270,8 @@ export class Boards {
       return true;
     } else {
       // TODO: here we have to make descision if it's wumpus or pit or Bump [bump means invalid move](Abir)
+      gameBoard[target_x][target_y] = "A";
+      gameBoard[current_x][current_y] = this.initialGrid[current_x][current_y];
       console.error("Invalid or unsafe move.");
       return false;
     }

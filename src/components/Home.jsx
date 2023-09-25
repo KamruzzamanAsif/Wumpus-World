@@ -8,6 +8,7 @@ const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(boards.getBoard());
   const [playmode, setPlayMode] = useState(false);
+  let isGameOver = null;
 
   function toggleCheatMode() {
     setCheatMode(!cheatMode);
@@ -19,14 +20,40 @@ const Grid = () => {
     setPlayMode(false);
   }
 
+  // const moveAgent = async () => {
+  //   setPlayMode(true);
+
+  //   //! this is must to recursively run the agent after specific interval
+  //   async function makeNextMove() {
+  //     if (isMoving > 0) {
+  //       //! move logics
+  //       move();
+
+  //       setBoard([...boards.getBoard()]);
+  //       isMoving = isMoving - 1;
+
+  //       // Wait for a short period before making the next move
+  //       await new Promise((resolve) => setTimeout(resolve, 100));
+
+  //       // Make the next move
+  //       makeNextMove();
+  //     }
+  //   }
+
+  //   // TODO: Later it should be infinite until game is over
+  //   let isMoving = 25;
+  //   makeNextMove();
+  // };
+
   const moveAgent = async () => {
     setPlayMode(true);
 
-    //! this is must to recursively run the agent after specific interval
+    //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
-      if (isMoving > 0) {
+      if (isMoving > 0 && !isGameOver) {
+        // Check if the game is not over
         //! move logics
-        move();
+        isGameOver = move();
 
         setBoard([...boards.getBoard()]);
         isMoving = isMoving - 1;
@@ -34,13 +61,18 @@ const Grid = () => {
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        // Make the next move
-        makeNextMove();
+        if (isGameOver) {
+          alert('Game Over')
+        } else {
+          // Make the next move
+          makeNextMove();
+        }
       }
     }
 
-    // TODO: Later it should be infinite until game is over
-    let isMoving = 25;
+    // TODO: Later it should be infinite until the game is over
+    let isMoving = 12500;
+    let isGameOver = false;
     makeNextMove();
   };
 
