@@ -2,32 +2,39 @@ import { useEffect, useState } from "react";
 import "../styles/Grid.css";
 import { boards } from "./Boards";
 import Cell from "./Cell";
-import { move } from "./ControlLogic";
+import { play } from "./Play";
 
 const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(boards.getBoard());
   const [playmode, setPlayMode] = useState(false);
+  let isMoving = 0;
 
   function toggleCheatMode() {
     setCheatMode(!cheatMode);
   }
 
   function resetBoard() {
-    setBoard([...boards.initialGrid]);
-    boards.resetBoard();
+    // agent index issue
+    boards.initEnvironment();
+    isMoving = 0;
+    // setBoard((boards.grid[0][0] = "A"));
+    setBoard([...boards.getBoard()]);
     setPlayMode(false);
   }
 
   const moveAgent = async () => {
     setPlayMode(true);
+    
+    // TOOD: RESET BUTTON
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
-      if (isMoving > 0 && !isGameOver) {
-        // Check if the game is not over
-        //! move logics
-        isGameOver = move();
+      if (isMoving > 0 && !play.isGameOver()) {
+        // ****** NEW GAME ********
+        play.makeMove();
+        boards.updateBoard(play.agentIndex);
+        // ****** New MOVE ********
 
         setBoard([...boards.getBoard()]);
         isMoving = isMoving - 1;
@@ -35,8 +42,18 @@ const Grid = () => {
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        if (isGameOver) {
-          alert("Game Over");
+        if (play.isGameOver()) {
+          if (play.isYouWin()) {
+            alert("Wuhhu! You Collected all Golds");
+          } else if (play.isYouLose()) {
+            alert(
+              "Nooo! You Lost! " +
+                "You fall into Pit => " +
+                play.agentIndex.row +
+                ", " +
+                play.agentIndex.column
+            );
+          }
         } else {
           // Make the next move
           makeNextMove();
@@ -44,15 +61,13 @@ const Grid = () => {
       }
     }
 
-    // TODO: Later it should be infinite until the game is over
-    let isMoving = 150;
-    let isGameOver = false;
+    isMoving = 10;
     makeNextMove();
-    console.log(boards.cellVisited);
   };
 
   // re-render the UI when agent make move
   useEffect(() => {
+    console.log("LAST");
     setBoard([...boards.getBoard()]);
   }, []);
 
@@ -97,7 +112,7 @@ const Grid = () => {
           <button className="cheatBtn" onClick={toggleCheatMode}>
             {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
           </button>
-          <button
+          {/* <button
             className="cheatBtn"
             onClick={() => {
               boards.setRandomBoard();
@@ -105,7 +120,7 @@ const Grid = () => {
             }}
           >
             Generate Board
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -114,7 +129,12 @@ const Grid = () => {
           <div key={colIndex} className="row">
             {col.map((cell, rowIndex) => (
               <div key={rowIndex} className="box">
-                <Cell id={cell} cheatMode={cheatMode} x={rowIndex} y={colIndex} />
+                <Cell
+                  id={cell}
+                  cheatMode={cheatMode}
+                  x={rowIndex}
+                  y={colIndex}
+                />
               </div>
             ))}
           </div>

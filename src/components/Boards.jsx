@@ -11,47 +11,27 @@
 
  */
 
+import { play } from "./Play";
+
 export class Boards {
   constructor() {
     this.BOARD_SIZE = 10;
     this.modifiedCells = new Set();
+    this.initialGrid;
 
-    this.initialGrid = [
-      ["S", "S", "T", "S", "S", "S", "T", "B", "P", "B"],
-      ["S", "T", "W", "T", "S", "T", "W", "T", "B", "S"],
-      ["S", "S", "T", "S", "G", "S", "T", "S", "S", "S"],
-      ["S", "B", "S", "S", "S", "B", "P", "B", "S", "S"],
-      ["B", "P", "B", "S", "S", "B", "B", "S", "S", "S"],
-      ["S", "B", "S", "S", "B", "P", "B", "S", "S", "S"],
-      ["S", "S", "S", "B", "T", "W", "T", "S", "S", "B"],
-      ["S", "G", "B", "P", "B", "T", "S", "S", "B", "P"],
-      ["S", "S", "S", "B", "P", "B", "S", "S", "G", "B"],
-      ["A", "S", "S", "S", "B", "W", "T", "S", "S", "S"],
-    ];
-
-    this.cellVisited = [
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [true, false, false, false, false, false, false, false, false, false],
-    ];
-
+    this.initEnvironment();
     this.grid = this.deepCopy(this.initialGrid);
   }
 
   initEnvironment() {
-    // initialize cellvisited array
-    for (let i = 0; i < this.BOARD_SIZE; i++) {
-      for (let j = 0; j < this.BOARD_SIZE; j++) {
-        this.cellVisited[i][j] = false;
-      }
-    }
+    play.gameOnInit(3, 5, 2, "Easy");
+    this.cellVisited = Array.from({ length: this.BOARD_SIZE }, () =>
+      Array(this.BOARD_SIZE).fill(0)
+    );
+    this.cellVisited[0][0] = true;
+    this.initialGrid = this.deepCopy(play.board);
+    this.initialGrid[0][0] = "A";
+    return play.getBoard();
   }
 
   deepCopy(grid) {
@@ -126,14 +106,13 @@ export class Boards {
     // console.log("New ", grid);
 
     this.initEnvironment();
-
-    console.log("V: ", this.cellVisited);
-
     grid = this.addPercept(grid);
     return grid;
   }
 
   getBoard() {
+    // **** NEW BOARD ****
+    // play.getBoard()
     return this.grid;
   }
 
@@ -145,8 +124,9 @@ export class Boards {
 
   resetBoard() {
     // without deep copy, we can't reset the board state
-    this.grid = this.deepCopy(this.initialGrid);
-    this.initEnvironment();
+    let board = this.initEnvironment();
+    return board;
+    // this.initEnvironment();
   }
 
   getCurrentPosition(element) {
@@ -292,6 +272,25 @@ export class Boards {
     } else {
       return "S";
     }
+  }
+
+  updateBoard(agentPosition) {
+    let next_x = agentPosition.row;
+    let next_y = agentPosition.column;
+
+    let cur_x = play.currentIndex.row;
+    let cur_y = play.currentIndex.column;
+
+    // clear current cell agent
+
+    if (this.grid[cur_x][cur_y] == "A" && cur_x == 0 && cur_y == 0) {
+      this.initialGrid[cur_x][cur_y] = "S";
+    }
+
+    this.grid[next_x][next_y] = "A";
+    this.grid[cur_x][cur_y] = this.initialGrid[cur_x][cur_y];
+    this.cellVisited = play.cellVisited;
+    console.log(cur_x, cur_y, next_x, next_y);
   }
 }
 

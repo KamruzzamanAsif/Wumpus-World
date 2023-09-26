@@ -76,6 +76,7 @@ export function move() {
         }
         break;
     }
+    
   }
 
   return !nextMove;
