@@ -15,25 +15,34 @@ const Grid = () => {
   }
 
   function resetBoard() {
+    console.log("inside reset", play.isGameOver(), play.agentIndex);
+    play.gameOver = false;
+    play.agentIndex.row = 0;
+    play.agentIndex.column = 0;
+    play.resetCellVisitedArray();
+    console.log("inside reset", play.isGameOver(), play.cellVisited);
+
     // agent index issue
-    boards.initEnvironment();
-    isMoving = 0;
-    // setBoard((boards.grid[0][0] = "A"));
-    setBoard([...boards.getBoard()]);
+    setBoard(boards.initialGrid);
     setPlayMode(false);
+    console.log(boards.initialGrid);
   }
 
   const moveAgent = async () => {
     setPlayMode(true);
-    
+
     // TOOD: RESET BUTTON
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
       if (isMoving > 0 && !play.isGameOver()) {
         // ****** NEW GAME ********
+        if (play.board[0][0] == "A") {
+          play.board[0][0] = "S";
+        }
         play.makeMove();
         boards.updateBoard(play.agentIndex);
+        console.log("PTN: ", play.point);
         // ****** New MOVE ********
 
         setBoard([...boards.getBoard()]);
@@ -61,7 +70,7 @@ const Grid = () => {
       }
     }
 
-    isMoving = 10;
+    isMoving = 1500;
     makeNextMove();
   };
 

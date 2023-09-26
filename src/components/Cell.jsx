@@ -1,4 +1,4 @@
-import { boards } from "./Boards";
+import { play } from "./Play";
 
 // eslint-disable-next-line react/prop-types
 function Cell({ id, cheatMode, x, y }) {
@@ -47,7 +47,7 @@ function Cell({ id, cheatMode, x, y }) {
   }
 
   // If cheatMode is true and id is not 'A', show a closed cell
-  if (cheatMode && id !== "A" && !boards.cellVisited[x][y]) {
+  if (cheatMode && id !== "A" && !play.cellVisited[x][y]) {
     imgid = "src/assets/cover.png";
     imageSize = 50;
   }

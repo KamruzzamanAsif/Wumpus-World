@@ -770,6 +770,17 @@ export class Play {
   getBoard() {
     return this.board;
   }
+
+  resetCellVisitedArray() {
+    this.cellVisited = Array.from({ length: 10 }, () => Array(10).fill(false));
+    this.cellVisited[0][0] = true;
+    // this.getBoard()[0][0] = "A";
+    // for (let i = 0; i < 10; i++) {
+    //   for (let j = 0; j < 10; j++) {
+    //     this.cellVisited[i][j] = false;
+    //   }
+    // }
+  }
 }
 
 export const play = new Play();
