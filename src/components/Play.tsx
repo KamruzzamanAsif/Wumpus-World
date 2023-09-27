@@ -287,6 +287,7 @@ export class Play {
       this.gameOver = true;
       this.youLose = true;
       this.gameOverLine = "Game Over! You Lose";
+      console.log(this.gameOverLine);
       return -1;
     }
     // agent is close to wumpus
@@ -372,38 +373,102 @@ export class Play {
     // cell is danger cell
     else if (this.isItDangerCell()) {
       console.log("danger space");
-      // if left is safe, move there
+      // // if left is safe, move there
+      // if (
+      //   this.agentIndex.row != 0 &&
+      //   this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
+      // ) {
+      //   this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+      //   return this.LEFT;
+      // }
+      // // if down is safe, move there
+      // else if (
+      //   this.agentIndex.column != 0 &&
+      //   this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
+      // ) {
+      //   this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+      //   return this.DOWN;
+      // }
+      // // if right is safe, move there
+      // else if (
+      //   this.agentIndex.row != 9 &&
+      //   this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
+      // ) {
+      //   this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+      //   return this.RIGHT;
+      // }
+      // // if up is safe, move there
+      // else if (
+      //   this.agentIndex.column != 9 &&
+      //   this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
+      // ) {
+      //   this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+      //   return this.UP;
+      // }
+
+
+      // ***** randomly selects moves    *****//
+      // Create an array to store available directions
+      const availableDirections: number[] = [];
+
+      // Check if left is safe and add it to available directions
       if (
         this.agentIndex.row != 0 &&
         this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
-        return this.LEFT;
+        availableDirections.push(this.LEFT);
       }
-      // if down is safe, move there
-      else if (
+
+      // Check if down is safe and add it to available directions
+      if (
         this.agentIndex.column != 0 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
-        return this.DOWN;
+        availableDirections.push(this.DOWN);
       }
-      // if right is safe, move there
-      else if (
+
+      // Check if right is safe and add it to available directions
+      if (
         this.agentIndex.row != 9 &&
         this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
-        return this.RIGHT;
+        availableDirections.push(this.RIGHT);
       }
-      // if up is safe, move there
-      else if (
+
+      // Check if up is safe and add it to available directions
+      if (
         this.agentIndex.column != 9 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
-        return this.UP;
+        availableDirections.push(this.UP);
       }
+
+      // Check if there are available directions
+      if (availableDirections.length > 0) {
+        // Randomly choose a direction from available directions
+        const randomIndex = Math.floor(Math.random() * availableDirections.length);
+        const randomDirection = availableDirections[randomIndex];
+
+        // Update the total moves and return the chosen direction
+        switch (randomDirection) {
+          case this.LEFT:
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            return this.LEFT;
+          case this.DOWN:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            return this.DOWN;
+          case this.RIGHT:
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            return this.RIGHT;
+          case this.UP:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            return this.UP;
+        }
+      }
+
+      // If no safe direction is available, return null or an appropriate value
+      return -1; // or handle this case as needed
+
     }
     // cell is safe
     else if (!this.isItDangerCell()) {
@@ -583,7 +648,7 @@ export class Play {
 
   areWeInPitLoop() {
     if (
-      this.contiguousRandomMoveCount > 0 &&
+      // this.contiguousRandomMoveCount > 0 &&
       this.totalMoves[this.agentIndex.row][this.agentIndex.column] > 1 &&
       this.board[this.agentIndex.row][this.agentIndex.column].includes("B")
     )
