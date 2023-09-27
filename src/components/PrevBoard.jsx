@@ -25,28 +25,102 @@ export class Boards {
 
   initEnvironment() {
     play.gameOnInit(3, 5, 2, "Easy");
-
     this.cellVisited = Array.from({ length: this.BOARD_SIZE }, () =>
       Array(this.BOARD_SIZE).fill(0)
     );
-
-    play.cellVisited[0][0] = false;
-    play.cellVisited[9][0] = true;
+    this.console.log = true;
     this.initialGrid = this.deepCopy(play.board);
-    this.initialGrid[9][0] = "A";
+    this.initialGrid[0][0] = "A";
     return play.getBoard();
   }
 
-  deepCopy(originalArray) {
-    let new_arr = JSON.parse(JSON.stringify(originalArray));
-    return new_arr;
+  deepCopy(grid) {
+    return grid.map((row) => [...row]);
   }
+
+  // addPercept(board) {
+  //   const directions = [
+  //     [1, 0],
+  //     [-1, 0],
+  //     [0, 1],
+  //     [0, -1],
+  //   ];
+
+  //   for (let i = 0; i < this.BOARD_SIZE; i++) {
+  //     for (let j = 0; j < this.BOARD_SIZE; j++) {
+  //       const currentCell = board[i][j];
+
+  //       if (currentCell === "W" || currentCell === "P") {
+  //         directions.forEach(([dx, dy]) => {
+  //           const ni = i + dx;
+  //           const nj = j + dy;
+  //           if (this.isValidCell(ni, nj)) {
+  //             board[ni][nj] = currentCell === "W" ? "T" : "B";
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+
+  //   return board;
+  // }
+
+  // generateRandomBoard() {
+  //   // const characters = ["S", "W", "P", "G", "A"];
+  //   let grid = [];
+
+  //   let wumpusCount = 0;
+  //   let goldCount = 0;
+  //   let pitCount = 0;
+
+  //   for (let i = 0; i < this.BOARD_SIZE; i++) {
+  //     const row = [];
+  //     for (let j = 0; j < this.BOARD_SIZE; j++) {
+  //       let randomChar = "S"; // Default to "S"
+
+  //       // Place the agent in the bottom-left corner
+  //       if (i === this.BOARD_SIZE - 1 && j === 0) {
+  //         randomChar = "A";
+  //       } else {
+  //         // Generate random values for other cells
+  //         if (wumpusCount < 3 && Math.random() < 0.1) {
+  //           randomChar = "W"; // Up to three wumpus
+  //           wumpusCount++;
+  //         } else if (goldCount < 3 && Math.random() < 0.1) {
+  //           randomChar = "G"; // Up to three gold
+  //           goldCount++;
+  //         } else if (pitCount < 5 && Math.random() < 0.2) {
+  //           randomChar = "P"; // Up to 10 pits
+  //           pitCount++;
+  //         }
+  //       }
+
+  //       row.push(randomChar);
+  //     }
+  //     grid.push(row);
+  //   }
+
+  //   // console.log("GRID: ", this.grid);
+  //   this.grid = this.deepCopy(grid);
+  //   this.initialGrid = this.deepCopy(grid);
+  //   // console.log("New ", grid);
+
+  //   this.initEnvironment();
+  //   grid = this.addPercept(grid);
+  //   return grid;
+  // }
 
   getBoard() {
     // **** NEW BOARD ****
     // play.getBoard()
     return this.grid;
   }
+
+  // setRandomBoard() {
+  //   const newRandomBoard = this.generateRandomBoard();
+  //   this.initialGrid = newRandomBoard;
+  //   this.grid = this.deepCopy(newRandomBoard);
+  // }
 
   resetBoard() {
     // without deep copy, we can't reset the board state
@@ -71,6 +145,19 @@ export class Boards {
 
     return { rowIndex, colIndex };
   }
+
+  isValidCell = (x, y) => {
+    // Check if the cell is within the bounds of the board
+    if (x >= 0 && x < this.BOARD_SIZE && y >= 0 && y < this.BOARD_SIZE) {
+      // Check if the cell is safe (no Wumpus or pit)
+      // TODO: Use inferential Logic here
+      // if (board[x][y] !== "W" && board[x][y] !== "P") {
+      //   return true;
+      // }
+      return true;
+    }
+    return false;
+  };
 
   // TODO: Find safe cell based on Inferential logic and Probabilistic Logic
 
@@ -196,7 +283,7 @@ export class Boards {
 
     // clear current cell agent
 
-    if (this.grid[cur_x][cur_y] == "A" && cur_x == 9 && cur_y == 0) {
+    if (this.grid[cur_x][cur_y] == "A" && cur_x == 0 && cur_y == 0) {
       this.initialGrid[cur_x][cur_y] = "S";
     }
 

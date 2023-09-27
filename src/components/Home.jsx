@@ -4,9 +4,17 @@ import { boards } from "./Boards";
 import Cell from "./Cell";
 import { play } from "./Play";
 
+/**
+ * NEED TO FIX:
+ * 1. DANGER SPACE ERROR
+ * 2. LOOP ERROR in PIT LOOP (NEGATIVE INDEX)
+ * 3. REMOVE THE LAST GOLD AFTER FOUND
+ * 4. STECH ERROR
+ */
+
 const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
-  const [board, setBoard] = useState(boards.getBoard());
+  const [board, setBoard] = useState(boards.initialGrid);
   const [playmode, setPlayMode] = useState(false);
   let isMoving = 0;
 
@@ -37,15 +45,16 @@ const Grid = () => {
     async function makeNextMove() {
       if (isMoving > 0 && !play.isGameOver()) {
         // ****** NEW GAME ********
-        if (play.board[0][0] == "A") {
-          play.board[0][0] = "S";
-        }
+        // if (play.board[9][0] == "A") {
+        //   play.board[9][0] = "S";
+        // }
         play.makeMove();
         boards.updateBoard(play.agentIndex);
         boards.setBoard(play.getBoard());
         console.log("PTN: ", play.point);
         console.log("PROB of PIT: ", play.pitProbability);
         console.log("PROB of Wumpus: ", play.wumpusProbability);
+        console.log("BOARD: ", boards.getBoard());
         // ****** New MOVE ********
 
         setBoard([...boards.getBoard()]);
@@ -54,19 +63,20 @@ const Grid = () => {
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        let obstacle =
-          play.getBoard()[play.agentIndex.row][play.agentIndex.column];
-        if (obstacle == "P" || obstacle == "W") {
-          play.gameOver = true;
-        }
+        // let obstacle =
+        //   play.getBoard()[play.agentIndex.row][play.agentIndex.column];
+        // if (obstacle == "P" || obstacle == "W") {
+        //   play.gameOver = true;
+        // }
 
         if (play.isGameOver()) {
           if (play.isYouWin()) {
-            console.error("Wuhhu! You Collected all Golds");
+            alert("Wuhhu! You Collected all Golds");
+            play.board[play.agentIndex.row][play.agentIndex.col] = "S";
+            setBoard([...play.board]);
           } else if (play.isYouLose()) {
             alert(
               "Nooo! You Lost! (" +
-                obstacle +
                 ")You fall into Pit => " +
                 play.agentIndex.row +
                 ", " +
@@ -80,13 +90,12 @@ const Grid = () => {
       }
     }
 
-    isMoving = 1500;
+    isMoving = 1225;
     makeNextMove();
   };
 
   // re-render the UI when agent make move
   useEffect(() => {
-    console.log("LAST");
     setBoard([...boards.getBoard()]);
   }, []);
 
@@ -151,6 +160,9 @@ const Grid = () => {
           </h2>
           <h2 className="cheatBtn" style={{ color: "goldenrod" }}>
             Gold: {play.discoveredGold}
+          </h2>
+          <h2 className="cheatBtn" style={{ color: "blue" }}>
+            Moves: {play.moveCount}
           </h2>
         </div>
       </div>

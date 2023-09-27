@@ -6,7 +6,14 @@ function Cell({ id, cheatMode, x, y }) {
 
   // eslint-disable-next-line react/prop-types
   if (id.length > 1) {
-    if (id == "TB" || id == "BT" || id == "TBG" || id == "BTG" || id == "TBS") {
+    if (
+      id == "TB" ||
+      id == "BT" ||
+      id == "TBG" ||
+      id == "BTG" ||
+      id == "TBS" ||
+      id == "SBS"
+    ) {
       id = "TB";
     }
     if (id == "TG" || id == "GT") {
@@ -26,6 +33,13 @@ function Cell({ id, cheatMode, x, y }) {
     }
     if (id == "TS") {
       id = "T";
+    }
+    if (id == "WT" || id == "TW") {
+      id = "W";
+    }
+    // eslint-disable-next-line react/prop-types
+    if (id.includes("P")) {
+      id = "P";
     }
 
     imgid = `src/assets/${id}.png`;

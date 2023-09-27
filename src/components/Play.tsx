@@ -8,6 +8,7 @@ export class Play {
   pitCount = 0;
   goldCount = 0;
   point = 0;
+  moveCount = 0;
 
   // directions
   UP = 0;
@@ -151,12 +152,12 @@ export class Play {
 
   // for tracking agent
   agentIndex = {
-    row: 0,
+    row: 9,
     column: 0,
   };
 
   currentIndex = {
-    row: 0,
+    row: 9,
     column: 0,
   };
 
@@ -171,6 +172,8 @@ export class Play {
     goldCouont: any,
     difficulty: any
   ) {
+    console.log("INIT1: ", this.board);
+
     this.wumpusCount = wumpusCount;
     this.pitCount = pitCount;
     this.goldCount = goldCouont;
@@ -180,10 +183,12 @@ export class Play {
       this.threshold = 0.25;
     }
 
+    console.log("INIT2: ", this.board);
     this.init();
 
     // mark the first cell as visited
-    this.cellVisited[0][0] = true;
+    this.cellVisited[9][0] = true;
+    console.log("INIT3: ", this.board);
   }
 
   isValidCell = (x: number, y: number) => {
@@ -217,6 +222,7 @@ export class Play {
   makeMove() {
     var mv: number = -1;
     mv = this.move();
+    this.moveCount += 1;
 
     // Store the current location in currentIndex
     this.currentIndex = {
@@ -338,6 +344,8 @@ export class Play {
         this.removeStench(this.agentIndex.row + 1, this.agentIndex.column);
       }
 
+      console.log("DEAD: ", this.board);
+
       return -1; // return -1 means nothing. it wasn't used
     }
     // we are in pit loop
@@ -403,6 +411,10 @@ export class Play {
       ) {
         this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
         return this.UP;
+      } else {
+        // TODO: CHECK IF BOUNDARY VALUE IT IS
+        let randomMove = Math.floor(Math.random() * 4);
+        return randomMove;
       }
     }
     // cell is safe
@@ -539,46 +551,127 @@ export class Play {
     return false;
   }
 
-  removeStench(row: number, column: number) {
-    if (row != 0) {
-      this.board[row - 1][column] = this.board[row - 1][column].replace(
-        "T",
-        "S"
-      );
-      this.wumpusProbability[this.agentIndex.row - 1][
-        this.agentIndex.column
-      ] = 0.0;
-    }
-    if (row != 9) {
-      this.board[row + 1][column] = this.board[row + 1][column].replace(
-        "T",
-        "S"
-      );
-      if (this.isValidCell(this.agentIndex.row + 1, this.agentIndex.column)) {
-        this.wumpusProbability[this.agentIndex.row + 1][
-          this.agentIndex.column
-        ] = 0.0;
+  // removeStench(row: number, column: number) {
+  //   console.log("ROW: ", row, "COL: ", column);
+  //   if (row > 0) {
+  //     let cr = row - 1;
+  //     let cc = column;
+  //     let flag = 1;
+  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
+  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
+  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
+  //     }
+  //     if (flag) {
+  //       this.board[row - 1][column] = this.board[row - 1][column].replace(
+  //         "T",
+  //         ""
+  //       );
+  //     }
+  //   }
+  //   if (row < 9) {
+  //     let cr = row + 1;
+  //     let cc = column;
+  //     let flag = 1;
+  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
+  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
+  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
+  //     }
+
+  //     if (flag) {
+  //       this.board[row + 1][column] = this.board[row + 1][column].replace(
+  //         "T",
+  //         ""
+  //       );
+  //     }
+  //   }
+
+  //   if (column > 0) {
+  //     let cr = row;
+  //     let cc = column - 1;
+  //     let flag = 1;
+  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
+  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
+  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
+  //     }
+
+  //     if (flag) {
+  //       this.board[row][column - 1] = this.board[row][column - 1].replace(
+  //         "T",
+  //         ""
+  //       );
+  //     }
+  //   }
+  //   if (column < 9) {
+  //     let cr = row;
+  //     let cc = column + 1;
+  //     let flag = 1;
+  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
+  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
+  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
+  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
+  //     }
+
+  //     if (flag) {
+  //       this.board[row][column + 1] = this.board[row][column + 1].replace(
+  //         "T",
+  //         ""
+  //       );
+  //     }
+  //   }
+  //   // make wumpus prob to zero
+  //   this.wumpusProbability[row][column] = 0.0;
+  // }
+
+  removeStench(row, column) {
+    const directions = [
+      [-1, 0], // Up
+      [1, 0], // Down
+      [0, -1], // Left
+      [0, 1], // Right
+    ];
+
+    for (const [dr, dc] of directions) {
+      const cr = row + dr;
+      const cc = column + dc;
+
+      if (cr > 0 && cr < 9 && cc > 0 && cc < 9) {
+        let flag = 1;
+
+        for (const [r, c] of [
+          [-1, 0],
+          [1, 0],
+          [0, -1],
+          [0, 1],
+        ]) {
+          const nr = cr + r;
+          const nc = cc + c;
+
+          if (
+            nr >= 0 &&
+            nr <= 9 &&
+            nc >= 0 &&
+            nc <= 9 &&
+            this.board[nr][nc].includes("W")
+          ) {
+            flag = 0;
+            break;
+          }
+        }
+
+        if (flag) {
+          this.board[cr][cc] = this.board[cr][cc].replace("T", "S");
+        }
       }
     }
 
-    if (column != 0) {
-      this.board[row][column - 1] = this.board[row][column - 1].replace(
-        "T",
-        "S"
-      );
-      this.wumpusProbability[this.agentIndex.row][
-        this.agentIndex.column - 1
-      ] = 0.0;
-    }
-    if (column != 9) {
-      this.board[row][column + 1] = this.board[row][column + 1].replace(
-        "T",
-        "S"
-      );
-      this.wumpusProbability[this.agentIndex.row][
-        this.agentIndex.column + 1
-      ] = 0.0;
-    }
+    this.wumpusProbability[row][column] = 0.0;
   }
 
   areWeInPitLoop() {
@@ -703,68 +796,135 @@ export class Play {
   }
 
   init() {
-    for (var i = 0; i < this.wumpusCount; i++) {
-      let val = Math.floor(Math.random() * 100);
-      let col = val % 10;
-      let row = Math.floor((val / 10) % 10);
-      if (col < 2 && row < 2) {
-        i = i - 1;
-        continue;
-      }
-      if (this.board[row][col] == "W" || this.board[row][col] == "P") {
-        i = i - 1;
-        continue;
-      }
+    // wumpus init
+    for (let i = 0; i < this.wumpusCount; i++) {
+      let row, col;
+      do {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+      } while (
+        (row >= 8 && (col === 0 || col === 1)) ||
+        (row === 8 && col === 1) ||
+        this.board[row][col] === "W"
+      );
+
       this.board[row][col] = "W";
-      if (col != 0) this.board[row][col - 1] = "T";
-      if (col != 9) this.board[row][col + 1] = "T";
-      if (row != 0) this.board[row - 1][col] = "T";
-      if (row != 9) this.board[row + 1][col] = "T";
+    }
+    // update relative cells to wumpus
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (this.board[row][col].includes("W")) {
+          if (col > 0) {
+            if (this.board[row][col - 1] == "S") {
+              this.board[row][col - 1] = "T";
+            } else if (this.board[row][col - 1] == "W") {
+              this.board[row][col - 1] += "T";
+            }
+          }
+
+          if (col < 9) {
+            if (this.board[row][col + 1] == "S") {
+              this.board[row][col + 1] = "T";
+            } else if (this.board[row][col + 1] == "W") {
+              this.board[row][col + 1] += "T";
+            }
+          }
+
+          if (row > 0) {
+            if (this.board[row - 1][col] == "S") {
+              this.board[row - 1][col] = "T";
+            } else if (this.board[row - 1][col] == "W") {
+              this.board[row - 1][col] += "T";
+            }
+          }
+
+          if (row < 9) {
+            if (this.board[row + 1][col] == "S") {
+              this.board[row + 1][col] = "T";
+            } else if (this.board[row + 1][col] == "W") {
+              this.board[row + 1][col] += "T";
+            }
+          }
+        }
+      }
     }
 
-    for (var i = 0; i < this.pitCount; i++) {
-      let val = Math.floor(Math.random() * 100);
-      let col = val % 10;
-      let row = Math.floor((val / 10) % 10);
-      if (row < 2 && col < 2) {
-        i = i - 1;
-        continue;
+    // pit init
+    for (let i = 0; i < this.pitCount; i++) {
+      let row, col;
+      do {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+      } while (
+        (row >= 8 && (col === 0 || col === 1)) ||
+        (row === 8 && col === 1) ||
+        this.board[row][col].includes("P") ||
+        this.board[row][col].includes("W")
+      );
+
+      if (this.board[row][col] == "S") {
+        this.board[row][col] = "P";
+      } else {
+        this.board[row][col] += "P";
       }
-      if (this.board[row][col] == "P" || this.board[row][col] == "W") {
-        i = i - 1;
-        continue;
-      }
-      this.board[row][col] = "P";
-      if (col != 0)
-        if (this.board[row][col - 1] == "T") this.board[row][col - 1] += "B";
-        else this.board[row][col - 1] = "B";
-      if (col != 9)
-        if (this.board[row][col + 1] == "T") this.board[row][col + 1] += "B";
-        else this.board[row][col + 1] = "B";
-      if (row != 0)
-        if (this.board[row - 1][col] == "T") this.board[row - 1][col] += "B";
-        else this.board[row - 1][col] = "B";
-      if (row != 9)
-        if (this.board[row + 1][col] == "T") this.board[row + 1][col] += "B";
-        else this.board[row + 1][col] = "B";
     }
 
-    for (var i = 0; i < this.goldCount; i++) {
-      let val = Math.floor(Math.random() * 100);
-      let col = val % 10;
-      let row = Math.floor((val / 10) % 10);
-      if (row < 2 && col < 2) {
-        i = i - 1;
-        continue;
+    // update relative cell to pits
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (this.board[row][col].includes("P")) {
+          if (col > 0) {
+            if (this.board[row][col - 1] == "S") {
+              this.board[row][col - 1] = "B";
+            } else if (!this.board[row][col - 1].includes("B")) {
+              this.board[row][col - 1] += "B";
+            }
+          }
+
+          if (col < 9) {
+            if (this.board[row][col + 1] == "S") {
+              this.board[row][col + 1] = "B";
+            } else if (!this.board[row][col + 1].includes("B")) {
+              this.board[row][col + 1] += "B";
+            }
+          }
+
+          if (row > 0) {
+            if (this.board[row - 1][col] == "S") {
+              this.board[row - 1][col] = "B";
+            } else if (!this.board[row - 1][col].includes("B")) {
+              this.board[row - 1][col] += "B";
+            }
+          }
+
+          if (row < 9) {
+            if (this.board[row + 1][col] == "S") {
+              this.board[row + 1][col] = "B";
+            } else if (!this.board[row + 1][col].includes("B")) {
+              this.board[row + 1][col] += "B";
+            }
+          }
+        }
       }
-      if (this.board[row][col] == "W" || this.board[row][col] == "P") {
-        i = i - 1;
-        continue;
-      }
+    }
+
+    // gold init
+    for (let i = 0; i < this.goldCount; i++) {
+      let row, col;
+      do {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+      } while (
+        (row === 0 && col === 0) ||
+        this.board[row][col] === "W" ||
+        this.board[row][col] === "P"
+      );
+
       this.board[row][col] += "G";
     }
 
     this.cboard = JSON.parse(JSON.stringify(this.board));
+    console.log("Init korar por:", this.board);
   }
 
   getBoard() {
@@ -773,13 +933,7 @@ export class Play {
 
   resetCellVisitedArray() {
     this.cellVisited = Array.from({ length: 10 }, () => Array(10).fill(false));
-    this.cellVisited[0][0] = true;
-    // this.getBoard()[0][0] = "A";
-    // for (let i = 0; i < 10; i++) {
-    //   for (let j = 0; j < 10; j++) {
-    //     this.cellVisited[i][j] = false;
-    //   }
-    // }
+    this.cellVisited[9][0] = true;
   }
 }
 
