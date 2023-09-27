@@ -245,8 +245,8 @@ export class Play {
   move() {
     this.calculateBreezeAndStench();
 
-    // case when game ends
     if (this.gameOver || this.busy) {
+      // case when game ends
       return -1;
     }
 
@@ -268,8 +268,8 @@ export class Play {
 
       // when collects all gold
       if (this.discoveredGold == this.goldCount) {
-        console.log("Discovered gold " + this.discoveredGold);
-        console.log("total gold " + this.goldCount);
+        console.error("Discovered gold " + this.discoveredGold);
+        console.error("total gold " + this.goldCount);
 
         this.gameOver = true;
         this.gameOverLine = "Congrats! You Win";
@@ -500,7 +500,6 @@ export class Play {
         }
       }
     }
-
     return -1;
   }
 
@@ -561,6 +560,7 @@ export class Play {
         ] = 0.0;
       }
     }
+
     if (column != 0) {
       this.board[row][column - 1] = this.board[row][column - 1].replace(
         "T",

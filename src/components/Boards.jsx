@@ -292,6 +292,19 @@ export class Boards {
     this.cellVisited = play.cellVisited;
     console.log(cur_x, cur_y, next_x, next_y);
   }
+
+  setBoard(new_board) {
+    this.initialGrid = new_board;
+  }
+
+  clearEnvironment() {
+    this.initialGrid = this.grid = Array.from(
+      { length: this.BOARD_SIZE },
+      () => {
+        Array(this.BOARD_SIZE).fill("");
+      }
+    );
+  }
 }
 
 export const boards = new Boards();

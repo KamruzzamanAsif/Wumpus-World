@@ -14,19 +14,19 @@ const Grid = () => {
     setCheatMode(!cheatMode);
   }
 
-  function resetBoard() {
-    console.log("inside reset", play.isGameOver(), play.agentIndex);
-    play.gameOver = false;
-    play.agentIndex.row = 0;
-    play.agentIndex.column = 0;
-    play.resetCellVisitedArray();
-    console.log("inside reset", play.isGameOver(), play.cellVisited);
+  // function resetBoard() {
+  //   console.log("inside reset", play.isGameOver(), play.agentIndex);
+  //   play.gameOver = false;
+  //   play.agentIndex.row = 0;
+  //   play.agentIndex.column = 0;
+  //   play.resetCellVisitedArray();
+  //   console.log("inside reset", play.isGameOver(), play.cellVisited);
 
-    // agent index issue
-    setBoard(boards.initialGrid);
-    setPlayMode(false);
-    console.log(boards.initialGrid);
-  }
+  //   // agent index issue
+  //   setBoard(boards.initialGrid);
+  //   setPlayMode(false);
+  //   console.log(boards.initialGrid);
+  // }
 
   const moveAgent = async () => {
     setPlayMode(true);
@@ -42,7 +42,10 @@ const Grid = () => {
         }
         play.makeMove();
         boards.updateBoard(play.agentIndex);
+        boards.setBoard(play.getBoard());
         console.log("PTN: ", play.point);
+        console.log("PROB of PIT: ", play.pitProbability);
+        console.log("PROB of Wumpus: ", play.wumpusProbability);
         // ****** New MOVE ********
 
         setBoard([...boards.getBoard()]);
@@ -51,13 +54,20 @@ const Grid = () => {
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
 
+        let obstacle =
+          play.getBoard()[play.agentIndex.row][play.agentIndex.column];
+        if (obstacle == "P" || obstacle == "W") {
+          play.gameOver = true;
+        }
+
         if (play.isGameOver()) {
           if (play.isYouWin()) {
-            alert("Wuhhu! You Collected all Golds");
+            console.error("Wuhhu! You Collected all Golds");
           } else if (play.isYouLose()) {
             alert(
-              "Nooo! You Lost! " +
-                "You fall into Pit => " +
+              "Nooo! You Lost! (" +
+                obstacle +
+                ")You fall into Pit => " +
                 play.agentIndex.row +
                 ", " +
                 play.agentIndex.column
@@ -113,9 +123,9 @@ const Grid = () => {
             </button>
           )}
 
-          <button className="cheatBtn" onClick={resetBoard}>
+          {/* <button className="cheatBtn" onClick={resetBoard}>
             Reset
-          </button>
+          </button> */}
         </div>
         <div className="cheatSection">
           <button className="cheatBtn" onClick={toggleCheatMode}>
@@ -130,6 +140,18 @@ const Grid = () => {
           >
             Generate Board
           </button> */}
+        </div>
+        <div className="textArea">
+          <h2 style={{ color: "green" }}>Points: {play.point}</h2>
+          <h2 className="cheatBtn" style={{ color: "red" }}>
+            Wumpus: {play.wumpusCount}
+          </h2>
+          <h2 className="cheatBtn" style={{ color: "brown" }}>
+            Pit: {play.pitCount}
+          </h2>
+          <h2 className="cheatBtn" style={{ color: "goldenrod" }}>
+            Gold: {play.discoveredGold}
+          </h2>
         </div>
       </div>
 

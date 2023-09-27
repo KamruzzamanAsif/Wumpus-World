@@ -4,7 +4,7 @@
     grid-template-columns: repeat(10, 50px);
     justify-content: center;
     gap: 2px;
-    height: 60vh;
+    height: 50vh;
 }
 
 .game-container {
@@ -15,7 +15,7 @@
 .left-content {
     /* border: 2px solid red; */
     display: flex;
-    width: 30vw;
+    width: 20vw;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -36,12 +36,18 @@
 }
 
 
-.cheatSection {
+/* .cheatSection {
     height: 50vh;
-}
+} */
 
 .playBtnSection {
     height: 50vh;
+}
+
+.textArea {
+    border: 2px solid brown;
+    padding: 2rem;
+    margin: 1rem;
 }
 
 .box {
