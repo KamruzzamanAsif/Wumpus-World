@@ -66,7 +66,7 @@ export class Play {
   ];
 
   cellVisited = [
-    [true, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
     [false, false, false, false, false, false, false, false, false, false],
     [false, false, false, false, false, false, false, false, false, false],
     [false, false, false, false, false, false, false, false, false, false],
@@ -285,10 +285,7 @@ export class Play {
       }
     }
     // cell contains wumpus or, pit
-    else if (
-      this.board[this.agentIndex.row][this.agentIndex.column] == "W" ||
-      this.board[this.agentIndex.row][this.agentIndex.column] == "P"
-    ) {
+    else if (this.board[this.agentIndex.row][this.agentIndex.column] == "W" || this.board[this.agentIndex.row][this.agentIndex.column] == "P"){
       this.point -= 10000;
       this.gameOver = true;
       this.youLose = true;
@@ -381,75 +378,160 @@ export class Play {
     // cell is danger cell
     else if (this.isItDangerCell()) {
       console.log("danger space");
-      // // if left is safe, move there
-      // if (
-      //   this.agentIndex.row != 0 &&
-      //   this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
-      // ) {
-      //   this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
-      //   return this.LEFT;
-      // }
-      // // if down is safe, move there
-      // else if (
-      //   this.agentIndex.column != 0 &&
-      //   this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
-      // ) {
-      //   this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
-      //   return this.DOWN;
-      // }
-      // // if right is safe, move there
-      // else if (
-      //   this.agentIndex.row != 9 &&
-      //   this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
-      // ) {
-      //   this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
-      //   return this.RIGHT;
-      // }
-      // // if up is safe, move there
-      // else if (
-      //   this.agentIndex.column != 9 &&
-      //   this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
-      // ) {
-      //   this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
-      //   return this.UP;
-      // }
-
-
-      // ***** randomly selects moves    *****//
+      // ***** Firstly we will backtrack to already visited cells *****//
       // Create an array to store available directions
-      const availableDirections: number[] = [];
+      const visitedAvailableDirections: number[] = [];
 
       // Check if left is safe and add it to available directions
       if (
-        this.agentIndex.row != 0 &&
+        this.agentIndex.row > 0 &&
         this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        availableDirections.push(this.LEFT);
+        visitedAvailableDirections.push(this.LEFT);
       }
 
       // Check if down is safe and add it to available directions
       if (
-        this.agentIndex.column != 0 &&
+        this.agentIndex.column > 0 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        availableDirections.push(this.DOWN);
+        visitedAvailableDirections.push(this.DOWN);
       }
 
       // Check if right is safe and add it to available directions
       if (
-        this.agentIndex.row != 9 &&
+        this.agentIndex.row < 9 &&
         this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        availableDirections.push(this.RIGHT);
+        visitedAvailableDirections.push(this.RIGHT);
       }
 
       // Check if up is safe and add it to available directions
       if (
-        this.agentIndex.column != 9 &&
+        this.agentIndex.column < 9 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
-        return this.UP;
+        visitedAvailableDirections.push(this.UP);
+      }
+
+      if(visitedAvailableDirections.length > 0){
+        const randomIndex = Math.floor(Math.random() * visitedAvailableDirections.length);
+        const randomDirection = visitedAvailableDirections[randomIndex];
+        // update the total moves and return the chosen direction
+        switch(randomDirection){
+          case this.LEFT:
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            return this.LEFT;
+          case this.RIGHT:
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            return this.RIGHT;
+          case this.UP:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            return this.UP;
+          case this.DOWN:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            return this.DOWN;
+        }
+      }
+
+      // ***** Secondly, If no visited cell found move randomly any of the cell with 
+      // pit and wumpus probability less than threshold *****//
+      
+      // Create an array to store available directions
+      const UnvisitedAvailableDirections: number[] = [];
+
+      // Check if left is safe and add it to available directions
+      if (
+        this.agentIndex.row > 0 &&
+        this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold &&
+        this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold
+      ) {
+        UnvisitedAvailableDirections.push(this.LEFT);
+      }
+
+      // Check if down is safe and add it to available directions
+      if (
+        this.agentIndex.column > 0 &&
+        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold &&
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold
+      ) {
+        UnvisitedAvailableDirections.push(this.DOWN);
+      }
+
+      // Check if right is safe and add it to available directions
+      if (
+        this.agentIndex.row < 9 &&
+        this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold &&
+        this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold
+      ) {
+        UnvisitedAvailableDirections.push(this.RIGHT);
+      }
+
+      // Check if up is safe and add it to available directions
+      if (
+        this.agentIndex.column < 9 &&
+        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold &&
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold
+      ) {
+        UnvisitedAvailableDirections.push(this.UP);
+      }
+
+      if(UnvisitedAvailableDirections.length > 0){
+        const randomIndex = Math.floor(Math.random() * UnvisitedAvailableDirections.length);
+        const randomDirection = UnvisitedAvailableDirections[randomIndex];
+        // update the total moves and return the chosen direction
+        switch(randomDirection){
+          case this.LEFT:
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            return this.LEFT;
+          case this.RIGHT:
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            return this.RIGHT;
+          case this.UP:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            return this.UP;
+          case this.DOWN:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            return this.DOWN;
+        }
+      }
+
+      /**** Lastly, move randomly ****/
+      const availableDirections: number[] = [];
+      if (this.agentIndex.row > 0) {
+        availableDirections.push(this.LEFT);
+      }
+      if (
+        this.agentIndex.column > 0) {
+        availableDirections.push(this.DOWN);
+      }
+      if (
+        this.agentIndex.row < 9) {
+        availableDirections.push(this.RIGHT);
+      }
+      if (
+        this.agentIndex.column < 9) {
+        availableDirections.push(this.UP);
+      }
+      
+      if(availableDirections.length > 0){
+        const randomIndex = Math.floor(Math.random() * availableDirections.length);
+        const randomDirection = availableDirections[randomIndex];
+        // update the total moves and return the chosen direction
+        switch(randomDirection){
+          case this.LEFT:
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            return this.LEFT;
+          case this.RIGHT:
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            return this.RIGHT;
+          case this.UP:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            return this.UP;
+          case this.DOWN:
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            return this.DOWN;
+        }
       }
     }
     // cell is safe
@@ -586,84 +668,6 @@ export class Play {
     return false;
   }
 
-  // removeStench(row: number, column: number) {
-  //   console.log("ROW: ", row, "COL: ", column);
-  //   if (row > 0) {
-  //     let cr = row - 1;
-  //     let cc = column;
-  //     let flag = 1;
-  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
-  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
-  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
-  //     }
-  //     if (flag) {
-  //       this.board[row - 1][column] = this.board[row - 1][column].replace(
-  //         "T",
-  //         ""
-  //       );
-  //     }
-  //   }
-  //   if (row < 9) {
-  //     let cr = row + 1;
-  //     let cc = column;
-  //     let flag = 1;
-  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
-  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
-  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
-  //     }
-
-  //     if (flag) {
-  //       this.board[row + 1][column] = this.board[row + 1][column].replace(
-  //         "T",
-  //         ""
-  //       );
-  //     }
-  //   }
-
-  //   if (column > 0) {
-  //     let cr = row;
-  //     let cc = column - 1;
-  //     let flag = 1;
-  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
-  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
-  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
-  //     }
-
-  //     if (flag) {
-  //       this.board[row][column - 1] = this.board[row][column - 1].replace(
-  //         "T",
-  //         ""
-  //       );
-  //     }
-  //   }
-  //   if (column < 9) {
-  //     let cr = row;
-  //     let cc = column + 1;
-  //     let flag = 1;
-  //     if (cc >= 1 && cc < 9 && cr >= 1 && cc < 9) {
-  //       if (this.board[cr - 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr + 1][cc].includes("W")) flag = 0;
-  //       if (this.board[cr][cc - 1].includes("W")) flag = 0;
-  //       if (this.board[cr][cc + 1].includes("W")) flag = 0;
-  //     }
-
-  //     if (flag) {
-  //       this.board[row][column + 1] = this.board[row][column + 1].replace(
-  //         "T",
-  //         ""
-  //       );
-  //     }
-  //   }
-  //   // make wumpus prob to zero
-  //   this.wumpusProbability[row][column] = 0.0;
-  // }
-
   removeStench(row, column) {
     const directions = [
       [-1, 0], // Up
@@ -701,12 +705,14 @@ export class Play {
         }
 
         if (flag) {
-          this.board[cr][cc] = this.board[cr][cc].replace("T", "S");
+          this.board[cr][cc] = this.board[cr][cc].replace("T", "");
         }
       }
     }
 
     this.wumpusProbability[row][column] = 0.0;
+
+    console.log("after removing stench: ", row, column, this.board);
   }
 
   areWeInPitLoop() {
@@ -829,6 +835,7 @@ export class Play {
     // update the cell to danger
     this.nearDanger[this.agentIndex.row][this.agentIndex.column] = true;
   }
+
 
   init() {
     // wumpus init

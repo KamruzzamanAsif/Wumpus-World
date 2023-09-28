@@ -6,7 +6,6 @@ import { play } from "./Play";
 
 /**
  * NEED TO FIX:
- * 1. DANGER SPACE ERROR
  * 2. LOOP ERROR in PIT LOOP (NEGATIVE INDEX)
  * 3. REMOVE THE LAST GOLD AFTER FOUND
  * 4. STECH ERROR
