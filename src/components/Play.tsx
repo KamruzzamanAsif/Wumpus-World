@@ -231,16 +231,16 @@ export class Play {
     };
 
     if (mv == this.UP) {
-      this.agentIndex.column++;
-      this.point--;
-    } else if (mv == this.DOWN) {
-      this.agentIndex.column--;
-      this.point--;
-    } else if (mv == this.LEFT) {
       this.agentIndex.row--;
       this.point--;
-    } else if (mv == this.RIGHT) {
+    } else if (mv == this.DOWN) {
       this.agentIndex.row++;
+      this.point--;
+    } else if (mv == this.LEFT) {
+      this.agentIndex.column--;
+      this.point--;
+    } else if (mv == this.RIGHT) {
+      this.agentIndex.column++;
       this.point--;
     }
 
@@ -285,7 +285,7 @@ export class Play {
       }
     }
     // cell contains wumpus or, pit
-    else if (this.board[this.agentIndex.row][this.agentIndex.column] == "W" || this.board[this.agentIndex.row][this.agentIndex.column] == "P"){
+    else if (this.board[this.agentIndex.row][this.agentIndex.column].includes("W") || this.board[this.agentIndex.row][this.agentIndex.column].includes("P")){
       this.point -= 10000;
       this.gameOver = true;
       this.youLose = true;
@@ -298,7 +298,7 @@ export class Play {
       console.error("shoot");
       console.log("UP BOARD: ", this.board);
       this.wumpusKilled += 1;
-      if (this.shootDirection == this.UP) {
+      if (this.shootDirection == this.RIGHT) {
         this.board[this.agentIndex.row][this.agentIndex.column + 1] =
           this.board[this.agentIndex.row][this.agentIndex.column + 1].replace(
             "W",
@@ -310,7 +310,7 @@ export class Play {
         }
 
         this.removeStench(this.agentIndex.row, this.agentIndex.column + 1);
-      } else if (this.shootDirection == this.DOWN) {
+      } else if (this.shootDirection == this.LEFT) {
         this.board[this.agentIndex.row][this.agentIndex.column - 1] =
           this.board[this.agentIndex.row][this.agentIndex.column - 1].replace(
             "W",
@@ -320,7 +320,7 @@ export class Play {
           this.board[this.agentIndex.row][this.agentIndex.column - 1] = "D";
         }
         this.removeStench(this.agentIndex.row, this.agentIndex.column - 1);
-      } else if (this.shootDirection == this.LEFT) {
+      } else if (this.shootDirection == this.UP) {
         this.board[this.agentIndex.row - 1][this.agentIndex.column] =
           this.board[this.agentIndex.row - 1][this.agentIndex.column].replace(
             "W",
@@ -330,7 +330,7 @@ export class Play {
           this.board[this.agentIndex.row - 1][this.agentIndex.column] = "D";
         }
         this.removeStench(this.agentIndex.row - 1, this.agentIndex.column);
-      } else if (this.shootDirection == this.RIGHT) {
+      } else if (this.shootDirection == this.DOWN) {
         this.board[this.agentIndex.row + 1][this.agentIndex.column] =
           this.board[this.agentIndex.row + 1][this.agentIndex.column].replace(
             "W",
@@ -349,30 +349,93 @@ export class Play {
     // we are in pit loop
     else if (this.areWeInPitLoop()) {
       console.log("pit loop");
+      // first move to a random index where pit prob is less than threshold
+      const lessThresholdRandomDirections: number[] = [];
       if (
-        this.agentIndex.row != 9 &&
+        this.agentIndex.row < 9 &&
         this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] <
           this.threshold
       ) {
-        this.contiguousRandomMoveCount = 0;
-        return this.RIGHT;
-      } else if (
-        this.agentIndex.column != 9 &&
+        lessThresholdRandomDirections.push(this.DOWN);
+      } 
+      if (
+        this.agentIndex.column < 9 &&
         this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] <
           this.threshold
       ) {
-        this.contiguousRandomMoveCount = 0;
-        return this.UP;
-      } else if (
-        this.agentIndex.row != 0 &&
+        lessThresholdRandomDirections.push(this.RIGHT);
+      }
+      if (
+        this.agentIndex.row > 0 &&
         this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] <
           this.threshold
       ) {
-        this.contiguousRandomMoveCount = 0;
-        return this.LEFT;
-      } else {
-        this.contiguousRandomMoveCount = 0;
-        return this.DOWN;
+        lessThresholdRandomDirections.push(this.UP);
+      }
+      if(this.agentIndex.column > 0 &&
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] <
+        this.threshold){
+        lessThresholdRandomDirections.push(this.LEFT);
+      }
+
+      if(lessThresholdRandomDirections.length > 0){
+        const randomIndex = Math.floor(Math.random() * lessThresholdRandomDirections.length);
+        const randomDirection = lessThresholdRandomDirections[randomIndex];
+        // update the total moves and return the chosen direction
+        switch(randomDirection){
+          case this.LEFT:
+            this.contiguousRandomMoveCount = 0;
+            return this.LEFT;
+          case this.RIGHT:
+            this.contiguousRandomMoveCount = 0;
+            return this.RIGHT;
+          case this.UP:
+            this.contiguousRandomMoveCount = 0;
+            return this.UP;
+          case this.DOWN:
+            this.contiguousRandomMoveCount = 0;
+            return this.DOWN;
+        }
+      }
+      else{
+        // move to a random index
+        /**** Lastly, move randomly ****/
+        const randomDirections: number[] = [];
+        if (this.agentIndex.row > 0) {
+          randomDirections.push(this.UP);
+        }
+        if (
+          this.agentIndex.column > 0) {
+          randomDirections.push(this.LEFT);
+        }
+        if (
+          this.agentIndex.row < 9) {
+          randomDirections.push(this.DOWN);
+        }
+        if (
+          this.agentIndex.column < 9) {
+          randomDirections.push(this.RIGHT);
+        }
+        
+        if(randomDirections.length > 0){
+          const randomIndex = Math.floor(Math.random() * randomDirections.length);
+          const randomDirection = randomDirections[randomIndex];
+          // update the total moves and return the chosen direction
+          switch(randomDirection){
+            case this.LEFT:
+              this.contiguousRandomMoveCount = 0;
+              return this.LEFT;
+            case this.RIGHT:
+              this.contiguousRandomMoveCount = 0;
+              return this.RIGHT;
+            case this.UP:
+              this.contiguousRandomMoveCount = 0;
+              return this.UP;
+            case this.DOWN:
+              this.contiguousRandomMoveCount = 0;
+              return this.DOWN;
+          }
+        }
       }
     }
     // cell is danger cell
@@ -387,7 +450,7 @@ export class Play {
         this.agentIndex.row > 0 &&
         this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        visitedAvailableDirections.push(this.LEFT);
+        visitedAvailableDirections.push(this.UP);
       }
 
       // Check if down is safe and add it to available directions
@@ -395,7 +458,7 @@ export class Play {
         this.agentIndex.column > 0 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        visitedAvailableDirections.push(this.DOWN);
+        visitedAvailableDirections.push(this.LEFT);
       }
 
       // Check if right is safe and add it to available directions
@@ -403,7 +466,7 @@ export class Play {
         this.agentIndex.row < 9 &&
         this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        visitedAvailableDirections.push(this.RIGHT);
+        visitedAvailableDirections.push(this.DOWN);
       }
 
       // Check if up is safe and add it to available directions
@@ -411,7 +474,7 @@ export class Play {
         this.agentIndex.column < 9 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        visitedAvailableDirections.push(this.UP);
+        visitedAvailableDirections.push(this.RIGHT);
       }
 
       if(visitedAvailableDirections.length > 0){
@@ -420,16 +483,16 @@ export class Play {
         // update the total moves and return the chosen direction
         switch(randomDirection){
           case this.LEFT:
-            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
           case this.RIGHT:
-            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
             return this.RIGHT;
           case this.UP:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
             return this.UP;
           case this.DOWN:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
             return this.DOWN;
         }
       }
@@ -446,7 +509,7 @@ export class Play {
         this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold &&
         this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold
       ) {
-        UnvisitedAvailableDirections.push(this.LEFT);
+        UnvisitedAvailableDirections.push(this.UP);
       }
 
       // Check if down is safe and add it to available directions
@@ -455,7 +518,7 @@ export class Play {
         this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold &&
         this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold
       ) {
-        UnvisitedAvailableDirections.push(this.DOWN);
+        UnvisitedAvailableDirections.push(this.LEFT);
       }
 
       // Check if right is safe and add it to available directions
@@ -464,7 +527,7 @@ export class Play {
         this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold &&
         this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold
       ) {
-        UnvisitedAvailableDirections.push(this.RIGHT);
+        UnvisitedAvailableDirections.push(this.DOWN);
       }
 
       // Check if up is safe and add it to available directions
@@ -473,7 +536,7 @@ export class Play {
         this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold &&
         this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold
       ) {
-        UnvisitedAvailableDirections.push(this.UP);
+        UnvisitedAvailableDirections.push(this.RIGHT);
       }
 
       if(UnvisitedAvailableDirections.length > 0){
@@ -482,16 +545,16 @@ export class Play {
         // update the total moves and return the chosen direction
         switch(randomDirection){
           case this.LEFT:
-            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
           case this.RIGHT:
-            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
             return this.RIGHT;
           case this.UP:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
             return this.UP;
           case this.DOWN:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
             return this.DOWN;
         }
       }
@@ -499,19 +562,19 @@ export class Play {
       /**** Lastly, move randomly ****/
       const availableDirections: number[] = [];
       if (this.agentIndex.row > 0) {
-        availableDirections.push(this.LEFT);
+        availableDirections.push(this.UP);
       }
       if (
         this.agentIndex.column > 0) {
-        availableDirections.push(this.DOWN);
+        availableDirections.push(this.LEFT);
       }
       if (
         this.agentIndex.row < 9) {
-        availableDirections.push(this.RIGHT);
+        availableDirections.push(this.DOWN);
       }
       if (
         this.agentIndex.column < 9) {
-        availableDirections.push(this.UP);
+        availableDirections.push(this.RIGHT);
       }
       
       if(availableDirections.length > 0){
@@ -520,16 +583,16 @@ export class Play {
         // update the total moves and return the chosen direction
         switch(randomDirection){
           case this.LEFT:
-            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
           case this.RIGHT:
-            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
             return this.RIGHT;
           case this.UP:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
             return this.UP;
           case this.DOWN:
-            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
             return this.DOWN;
         }
       }
@@ -537,92 +600,104 @@ export class Play {
     // cell is safe
     else if (!this.isItDangerCell()) {
       console.log("free space");
-      // if right is not visited, move there
+      // first go to the unvisited index randomly
+      const freeSpaceToUnvisitedDirections: number[] = [];
       if (
-        this.agentIndex.row != 9 &&
+        this.agentIndex.row < 9 &&
         !this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column] =
-          true;
-        this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
-        return this.RIGHT;
+        freeSpaceToUnvisitedDirections.push(this.DOWN);
       }
-      // if up is not visited, move there
-      else if (
-        this.agentIndex.column != 9 &&
+
+      if (
+        this.agentIndex.column < 9 &&
         !this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1] =
-          true;
-        this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
-        return this.UP;
+        freeSpaceToUnvisitedDirections.push(this.RIGHT);
       }
-      // if left is not visited, move there
-      else if (
-        this.agentIndex.row != 0 &&
+
+      if (
+        this.agentIndex.row > 0 &&
         !this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column] =
-          true;
-        this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
-        return this.LEFT;
+        freeSpaceToUnvisitedDirections.push(this.UP);
       }
-      // if down is not visited, move there
-      else if (
-        this.agentIndex.column != 0 &&
+
+      if (
+        this.agentIndex.column > 0 &&
         !this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1] =
-          true;
-        this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
-        return this.DOWN;
+        freeSpaceToUnvisitedDirections.push(this.LEFT);
+      }
+
+      if(freeSpaceToUnvisitedDirections.length > 0){
+        const randomIndex = Math.floor(Math.random() * freeSpaceToUnvisitedDirections.length);
+        const randomDirection = freeSpaceToUnvisitedDirections[randomIndex];
+        // update the total moves and return the chosen direction
+        switch(randomDirection){
+          case this.LEFT:
+            this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1] = true;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
+            return this.LEFT;
+          case this.RIGHT:
+            this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1] = true;
+            this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
+            return this.RIGHT;
+          case this.UP:
+            this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column] = true;
+            this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
+            return this.UP;
+          case this.DOWN:
+            this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column] = true;
+            this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
+            return this.DOWN;
+        }
       }
       // if all neighbor have been visited, choose random direction
       else {
-        console.log("free neighbor");
         while (true) {
           switch (this.rand(1, 4)) {
             //if selected, move right
             case 1:
-              if (this.agentIndex.row != 9) {
+              if (this.agentIndex.row < 9) {
                 this.totalMoves[this.agentIndex.row + 1][
                   this.agentIndex.column
+                ]++;
+
+                this.contiguousRandomMoveCount++;
+                return this.DOWN;
+              }
+              break;
+            //if selected, move up
+            case 2:
+              if (this.agentIndex.column < 9) {
+                this.totalMoves[this.agentIndex.row][
+                  this.agentIndex.column + 1
                 ]++;
 
                 this.contiguousRandomMoveCount++;
                 return this.RIGHT;
               }
               break;
-            //if selected, move up
-            case 2:
-              if (this.agentIndex.column != 9) {
-                this.totalMoves[this.agentIndex.row][
-                  this.agentIndex.column + 1
+            //if selected, move left
+            case 3:
+              if (this.agentIndex.row > 0) {
+                this.totalMoves[this.agentIndex.row - 1][
+                  this.agentIndex.column
                 ]++;
 
                 this.contiguousRandomMoveCount++;
                 return this.UP;
               }
               break;
-            //if selected, move left
-            case 3:
-              if (this.agentIndex.row != 0) {
-                this.totalMoves[this.agentIndex.row - 1][
-                  this.agentIndex.column
-                ]++;
-
-                this.contiguousRandomMoveCount++;
-                return this.LEFT;
-              }
-              break;
             //if selected, move down
             case 4:
-              if (this.agentIndex.column != 0) {
+              if (this.agentIndex.column > 0) {
                 this.totalMoves[this.agentIndex.row][
                   this.agentIndex.column - 1
                 ]++;
                 this.contiguousRandomMoveCount++;
-                return this.DOWN;
+                return this.LEFT;
               }
               break;
           }
@@ -634,35 +709,35 @@ export class Play {
 
   isWumpusClose() {
     if (
-      this.agentIndex.column != 9 &&
+      this.agentIndex.column < 9 &&
       this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] >
-        0.5
-    ) {
-      this.shootDirection = this.UP;
-      return true;
-    }
-    if (
-      this.agentIndex.column != 0 &&
-      this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] >
-        0.5
-    ) {
-      this.shootDirection = this.DOWN;
-      return true;
-    }
-    if (
-      this.agentIndex.row != 9 &&
-      this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] >
         0.5
     ) {
       this.shootDirection = this.RIGHT;
       return true;
     }
     if (
-      this.agentIndex.row != 0 &&
-      this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] >
+      this.agentIndex.column > 0 &&
+      this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] >
         0.5
     ) {
       this.shootDirection = this.LEFT;
+      return true;
+    }
+    if (
+      this.agentIndex.row < 9 &&
+      this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] >
+        0.5
+    ) {
+      this.shootDirection = this.DOWN;
+      return true;
+    }
+    if (
+      this.agentIndex.row > 0 &&
+      this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] >
+        0.5
+    ) {
+      this.shootDirection = this.UP;
       return true;
     }
     return false;
@@ -719,7 +794,7 @@ export class Play {
 
   areWeInPitLoop() {
     if (
-      // this.contiguousRandomMoveCount > 0 &&
+      this.contiguousRandomMoveCount > 0 &&
       this.totalMoves[this.agentIndex.row][this.agentIndex.column] > 1 &&
       this.board[this.agentIndex.row][this.agentIndex.column].includes("B")
     )
@@ -775,7 +850,7 @@ export class Play {
 
   updatePitWumpusPercentage(pit: boolean, wumpus: boolean) {
     if (
-      this.agentIndex.column != 0 &&
+      this.agentIndex.column > 0 &&
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
     ) {
       if (pit) {
@@ -790,7 +865,7 @@ export class Play {
       }
     }
     if (
-      this.agentIndex.column != 9 &&
+      this.agentIndex.column < 9 &&
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
     ) {
       if (pit) {
@@ -805,7 +880,7 @@ export class Play {
       }
     }
     if (
-      this.agentIndex.row != 0 &&
+      this.agentIndex.row > 0 &&
       !this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
     ) {
       if (pit) {
@@ -820,7 +895,7 @@ export class Play {
       }
     }
     if (
-      this.agentIndex.row != 9 &&
+      this.agentIndex.row < 9 &&
       !this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
     ) {
       if (pit) {
@@ -959,9 +1034,9 @@ export class Play {
         row = Math.floor(Math.random() * 10);
         col = Math.floor(Math.random() * 10);
       } while (
-        (row === 0 && col === 0) ||
-        this.board[row][col] === "W" ||
-        this.board[row][col] === "P"
+        (row === 9 && col === 0) ||
+        this.board[row][col].includes("W") ||
+        this.board[row][col].includes("P")
       );
 
       this.board[row][col] += "G";
