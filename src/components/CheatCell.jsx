@@ -8,6 +8,7 @@ function CheatCell({ id, x, y }) {
   const isAgentCell = agent_x === x && agent_y === y;
   let backgroundColor = "";
 
+  const currCellId = play.getBoard()[x][y];
 
   if (id === 0.25) {
     backgroundColor = "orange";
@@ -19,6 +20,10 @@ function CheatCell({ id, x, y }) {
     if (isAgentCell) {
       backgroundColor = "blue";
     }
+  }
+
+  if (currCellId.includes("G")) {
+    backgroundColor = "yellow";
   }
 
   const cellStyle = {

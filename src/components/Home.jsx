@@ -17,7 +17,6 @@ import { play } from "./Play";
 const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(play.getBoard());
-  const [playmode, setPlayMode] = useState(false);
   const [finalMessage, setFinalMessage] = useState("");
 
   let isMoving = 0;
@@ -28,15 +27,15 @@ const Grid = () => {
 
   function resetBoard() {
     play.resetGameEnvironment();
-    setBoard(play.getBoard());
+    setBoard([...play.getBoard()]);
   }
 
   const moveAgent = async () => {
-    setPlayMode(true);
+    console.log("HERE?");
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
-      if (isMoving > 0) {
+      if (isMoving > 0 && !play.isGameOver()) {
         // ****** NEW GAME ********
         play.makeMove();
         boards.updateBoard(play.agentIndex);
@@ -44,11 +43,7 @@ const Grid = () => {
         if (play.isShoot) {
           setFinalMessage("Wumpus Shooted");
         }
-        console.log("PTN: ", play.point);
-        console.log("PROB of PIT: ", play.pitProbability);
-        console.log("PROB of Wumpus: ", play.wumpusProbability);
-        console.log("BOARD: ", boards.getBoard());
-        console.log("CHEAT: ", play.cboard);
+
         // ****** New MOVE ********
 
         setBoard([...play.getBoard()]);
@@ -166,15 +161,9 @@ const Grid = () => {
         </div>
         <div></div>
         <div className="playBtnSection">
-          {!playmode ? (
-            <button className="custom-btn" onClick={moveAgent}>
-              Play
-            </button>
-          ) : (
-            <button disabled className="custom-btn" onClick={moveAgent}>
-              Play
-            </button>
-          )}
+          <button className="custom-btn" onClick={moveAgent}>
+            Play
+          </button>
           <button className="custom-btn" onClick={toggleCheatMode}>
             {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
           </button>

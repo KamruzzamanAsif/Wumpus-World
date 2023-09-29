@@ -1106,6 +1106,31 @@ export class Play {
     this.gameOnInit(3, 5, 2, "");
     this.agentIndex = { row: 9, column: 0 };
     this.currentIndex = { row: 9, column: 0 };
+    // count things
+    this.pitCount = 0;
+    this.goldCount = 0;
+    this.point = 0;
+    this.moveCount = 0;
+    this.wumpusCount = 0;
+    this.contiguousRandomMoveCount = 0;
+    this.discoveredGold = 0;
+    this.wumpusKilled = 0;
+
+    // directions
+    this.UP = 0;
+    this.DOWN = 1;
+    this.LEFT = 2;
+    this.RIGHT = 3;
+    this.isShoot = false;
+
+    // results
+    this.gameOver = false;
+    this.youWin = false;
+    this.youLose = false;
+    this.gameOverLine = "";
+
+    // this is cheat mode
+    this.cheatOn = false;
   }
 }
 
