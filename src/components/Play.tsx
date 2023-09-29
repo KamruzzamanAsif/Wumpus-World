@@ -680,7 +680,7 @@ export class Play {
       const cr = row + dr;
       const cc = column + dc;
 
-      if (cr > 0 && cr < 9 && cc > 0 && cc < 9) {
+      if (cr >= 0 && cr <= 9 && cc >= 0 && cc <= 9) {
         let flag = 1;
 
         for (const [r, c] of [
@@ -706,12 +706,14 @@ export class Play {
 
         if (flag) {
           this.board[cr][cc] = this.board[cr][cc].replace("T", "");
+          let xd = JSON.stringify(this.getBoard());
+          console.log("wumpus killed: ",this.wumpusKilled);
+          console.log("after removing stench: ", row, column, xd);
         }
       }
     }
 
     this.wumpusProbability[row][column] = 0.0;
-
     console.log("after removing stench: ", row, column, this.board);
   }
 
