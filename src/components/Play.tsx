@@ -17,6 +17,7 @@ export class Play {
   RIGHT = 3;
   shootDirection!: number;
   moveDirection!: number;
+  isShoot = false;
 
   // results
   gameOver = false;
@@ -172,8 +173,6 @@ export class Play {
     goldCouont: any,
     difficulty: any
   ) {
-    console.log("INIT1: ", this.board);
-
     this.wumpusCount = wumpusCount;
     this.pitCount = pitCount;
     this.goldCount = goldCouont;
@@ -183,12 +182,10 @@ export class Play {
       this.threshold = 0.25;
     }
 
-    console.log("INIT2: ", this.board);
     this.init();
 
     // mark the first cell as visited
     this.cellVisited[9][0] = true;
-    console.log("INIT3: ", this.board);
   }
 
   isValidCell = (x: number, y: number) => {
@@ -269,13 +266,13 @@ export class Play {
         ][this.agentIndex.column].replace("G", "S");
 
         this.busy = false;
-        console.error("gold: " + this.discoveredGold);
+        // console.error("gold: " + this.discoveredGold);
       }, 1000);
 
       // when collects all gold
       if (this.discoveredGold == this.goldCount) {
-        console.error("Discovered gold " + this.discoveredGold);
-        console.error("total gold " + this.goldCount);
+        // console.error("Discovered gold " + this.discoveredGold);
+        // console.error("total gold " + this.goldCount);
 
         this.gameOver = true;
         this.gameOverLine = "Congrats! You Win";
@@ -285,7 +282,10 @@ export class Play {
       }
     }
     // cell contains wumpus or, pit
-    else if (this.board[this.agentIndex.row][this.agentIndex.column].includes("W") || this.board[this.agentIndex.row][this.agentIndex.column].includes("P")){
+    else if (
+      this.board[this.agentIndex.row][this.agentIndex.column].includes("W") ||
+      this.board[this.agentIndex.row][this.agentIndex.column].includes("P")
+    ) {
       this.point -= 10000;
       this.gameOver = true;
       this.youLose = true;
@@ -295,8 +295,9 @@ export class Play {
     }
     // agent is close to wumpus
     else if (this.wumpusCount > this.wumpusKilled && this.isWumpusClose()) {
-      console.error("shoot");
-      console.log("UP BOARD: ", this.board);
+      // console.error("shoot");
+      // console.log("UP BOARD: ", this.board);
+      this.isShoot = !this.isShoot;
       this.wumpusKilled += 1;
       if (this.shootDirection == this.RIGHT) {
         this.board[this.agentIndex.row][this.agentIndex.column + 1] =
@@ -357,7 +358,7 @@ export class Play {
           this.threshold
       ) {
         lessThresholdRandomDirections.push(this.DOWN);
-      } 
+      }
       if (
         this.agentIndex.column < 9 &&
         this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] <
@@ -372,17 +373,21 @@ export class Play {
       ) {
         lessThresholdRandomDirections.push(this.UP);
       }
-      if(this.agentIndex.column > 0 &&
+      if (
+        this.agentIndex.column > 0 &&
         this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] <
-        this.threshold){
+          this.threshold
+      ) {
         lessThresholdRandomDirections.push(this.LEFT);
       }
 
-      if(lessThresholdRandomDirections.length > 0){
-        const randomIndex = Math.floor(Math.random() * lessThresholdRandomDirections.length);
+      if (lessThresholdRandomDirections.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * lessThresholdRandomDirections.length
+        );
         const randomDirection = lessThresholdRandomDirections[randomIndex];
         // update the total moves and return the chosen direction
-        switch(randomDirection){
+        switch (randomDirection) {
           case this.LEFT:
             this.contiguousRandomMoveCount = 0;
             return this.LEFT;
@@ -396,32 +401,30 @@ export class Play {
             this.contiguousRandomMoveCount = 0;
             return this.DOWN;
         }
-      }
-      else{
+      } else {
         // move to a random index
         /**** Lastly, move randomly ****/
         const randomDirections: number[] = [];
         if (this.agentIndex.row > 0) {
           randomDirections.push(this.UP);
         }
-        if (
-          this.agentIndex.column > 0) {
+        if (this.agentIndex.column > 0) {
           randomDirections.push(this.LEFT);
         }
-        if (
-          this.agentIndex.row < 9) {
+        if (this.agentIndex.row < 9) {
           randomDirections.push(this.DOWN);
         }
-        if (
-          this.agentIndex.column < 9) {
+        if (this.agentIndex.column < 9) {
           randomDirections.push(this.RIGHT);
         }
-        
-        if(randomDirections.length > 0){
-          const randomIndex = Math.floor(Math.random() * randomDirections.length);
+
+        if (randomDirections.length > 0) {
+          const randomIndex = Math.floor(
+            Math.random() * randomDirections.length
+          );
           const randomDirection = randomDirections[randomIndex];
           // update the total moves and return the chosen direction
-          switch(randomDirection){
+          switch (randomDirection) {
             case this.LEFT:
               this.contiguousRandomMoveCount = 0;
               return this.LEFT;
@@ -477,11 +480,13 @@ export class Play {
         visitedAvailableDirections.push(this.RIGHT);
       }
 
-      if(visitedAvailableDirections.length > 0){
-        const randomIndex = Math.floor(Math.random() * visitedAvailableDirections.length);
+      if (visitedAvailableDirections.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * visitedAvailableDirections.length
+        );
         const randomDirection = visitedAvailableDirections[randomIndex];
         // update the total moves and return the chosen direction
-        switch(randomDirection){
+        switch (randomDirection) {
           case this.LEFT:
             this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
@@ -497,17 +502,20 @@ export class Play {
         }
       }
 
-      // ***** Secondly, If no visited cell found move randomly any of the cell with 
+      // ***** Secondly, If no visited cell found move randomly any of the cell with
       // pit and wumpus probability less than threshold *****//
-      
+
       // Create an array to store available directions
       const UnvisitedAvailableDirections: number[] = [];
 
       // Check if left is safe and add it to available directions
       if (
         this.agentIndex.row > 0 &&
-        this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold &&
-        this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] < this.threshold
+        this.wumpusProbability[this.agentIndex.row - 1][
+          this.agentIndex.column
+        ] < this.threshold &&
+        this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] <
+          this.threshold
       ) {
         UnvisitedAvailableDirections.push(this.UP);
       }
@@ -515,8 +523,11 @@ export class Play {
       // Check if down is safe and add it to available directions
       if (
         this.agentIndex.column > 0 &&
-        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold &&
-        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] < this.threshold
+        this.wumpusProbability[this.agentIndex.row][
+          this.agentIndex.column - 1
+        ] < this.threshold &&
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] <
+          this.threshold
       ) {
         UnvisitedAvailableDirections.push(this.LEFT);
       }
@@ -524,8 +535,11 @@ export class Play {
       // Check if right is safe and add it to available directions
       if (
         this.agentIndex.row < 9 &&
-        this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold &&
-        this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] < this.threshold
+        this.wumpusProbability[this.agentIndex.row + 1][
+          this.agentIndex.column
+        ] < this.threshold &&
+        this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] <
+          this.threshold
       ) {
         UnvisitedAvailableDirections.push(this.DOWN);
       }
@@ -533,17 +547,22 @@ export class Play {
       // Check if up is safe and add it to available directions
       if (
         this.agentIndex.column < 9 &&
-        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold &&
-        this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] < this.threshold
+        this.wumpusProbability[this.agentIndex.row][
+          this.agentIndex.column + 1
+        ] < this.threshold &&
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] <
+          this.threshold
       ) {
         UnvisitedAvailableDirections.push(this.RIGHT);
       }
 
-      if(UnvisitedAvailableDirections.length > 0){
-        const randomIndex = Math.floor(Math.random() * UnvisitedAvailableDirections.length);
+      if (UnvisitedAvailableDirections.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * UnvisitedAvailableDirections.length
+        );
         const randomDirection = UnvisitedAvailableDirections[randomIndex];
         // update the total moves and return the chosen direction
-        switch(randomDirection){
+        switch (randomDirection) {
           case this.LEFT:
             this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
@@ -564,24 +583,23 @@ export class Play {
       if (this.agentIndex.row > 0) {
         availableDirections.push(this.UP);
       }
-      if (
-        this.agentIndex.column > 0) {
+      if (this.agentIndex.column > 0) {
         availableDirections.push(this.LEFT);
       }
-      if (
-        this.agentIndex.row < 9) {
+      if (this.agentIndex.row < 9) {
         availableDirections.push(this.DOWN);
       }
-      if (
-        this.agentIndex.column < 9) {
+      if (this.agentIndex.column < 9) {
         availableDirections.push(this.RIGHT);
       }
-      
-      if(availableDirections.length > 0){
-        const randomIndex = Math.floor(Math.random() * availableDirections.length);
+
+      if (availableDirections.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * availableDirections.length
+        );
         const randomDirection = availableDirections[randomIndex];
         // update the total moves and return the chosen direction
-        switch(randomDirection){
+        switch (randomDirection) {
           case this.LEFT:
             this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
@@ -630,25 +648,31 @@ export class Play {
         freeSpaceToUnvisitedDirections.push(this.LEFT);
       }
 
-      if(freeSpaceToUnvisitedDirections.length > 0){
-        const randomIndex = Math.floor(Math.random() * freeSpaceToUnvisitedDirections.length);
+      if (freeSpaceToUnvisitedDirections.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * freeSpaceToUnvisitedDirections.length
+        );
         const randomDirection = freeSpaceToUnvisitedDirections[randomIndex];
         // update the total moves and return the chosen direction
-        switch(randomDirection){
+        switch (randomDirection) {
           case this.LEFT:
-            this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1] = true;
+            this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1] =
+              true;
             this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1]++;
             return this.LEFT;
           case this.RIGHT:
-            this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1] = true;
+            this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1] =
+              true;
             this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1]++;
             return this.RIGHT;
           case this.UP:
-            this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column] = true;
+            this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column] =
+              true;
             this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column]++;
             return this.UP;
           case this.DOWN:
-            this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column] = true;
+            this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column] =
+              true;
             this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column]++;
             return this.DOWN;
         }
@@ -782,7 +806,7 @@ export class Play {
         if (flag) {
           this.board[cr][cc] = this.board[cr][cc].replace("T", "");
           let xd = JSON.stringify(this.getBoard());
-          console.log("wumpus killed: ",this.wumpusKilled);
+          console.log("wumpus killed: ", this.wumpusKilled);
           console.log("after removing stench: ", row, column, xd);
         }
       }
@@ -913,7 +937,6 @@ export class Play {
     this.nearDanger[this.agentIndex.row][this.agentIndex.column] = true;
   }
 
-
   init() {
     // wumpus init
     for (let i = 0; i < this.wumpusCount; i++) {
@@ -1043,7 +1066,6 @@ export class Play {
     }
 
     this.cboard = JSON.parse(JSON.stringify(this.board));
-    console.log("Init korar por:", this.board);
   }
 
   getBoard() {

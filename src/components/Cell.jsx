@@ -25,7 +25,7 @@ function Cell({ id, cheatMode, x, y }) {
     if (id == "SG" || id == "GS" || id == "SGG" || id == "SSG") {
       id = "G";
     }
-    if (id == "" || id == "SS") {
+    if (id == "" || id == "SS" || id == "") {
       id = "S";
     }
     if (id == "SB" || id == "BS") {
@@ -43,42 +43,47 @@ function Cell({ id, cheatMode, x, y }) {
     }
 
     imgid = `src/assets/${id}.png`;
-    imageSize = 45;
+    imageSize = 50;
   } else {
     imgid = `src/assets/${id}.png`;
-    imageSize = 30;
+    imageSize = 50;
+  }
+
+  if (id == 0) {
+    imgid = `src/assets/S.png`;
+    imageSize = 50;
   }
 
   // different size of the board images (as the image aren't of equal size)
   if (id === "A") {
-    imageSize = 28;
+    imageSize = 50;
   }
   if (id === "S") {
-    imageSize = 40;
+    imageSize = 50;
   }
   if (id === "G") {
     imageSize = 50;
   }
   if (id === "P") {
-    imageSize = 40;
+    imageSize = 50;
   }
   if (id === "W") {
-    imageSize = 18;
+    imageSize = 50;
   }
   if (id == "D") {
-    imageSize = 40;
+    imageSize = 50;
   }
 
   // If cheatMode is true and id is not 'A', show a closed cell
   if (cheatMode && id !== "A" && !play.cellVisited[x][y]) {
     imgid = "src/assets/cover.png";
-    imageSize = 50;
+    imageSize = 65;
   }
 
   return (
     // load relevant image
     <div>
-      <img src={imgid} width={imageSize} alt={id} />
+      <img src={imgid} width={imageSize} height={imageSize} alt={id} />
     </div>
   );
 }

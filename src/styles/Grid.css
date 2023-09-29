@@ -1,31 +1,63 @@
 .game-board {
     display: grid;
-    grid-template-rows: repeat(10, 50px);
-    grid-template-columns: repeat(10, 50px);
-    justify-content: center;
+    grid-template-rows: repeat(10, 65px);
+    grid-template-columns: repeat(10, 65px);
     gap: 2px;
-    height: 50vh;
+    /* border: 2px solid blue; */
+    height: 80vh;
+    padding: 1rem;
+    justify-content: right;
+    padding-right: 5rem;
+    /* height: 70vh; */
+}
+
+.cheat-board {
+    display: grid;
+    grid-template-rows: repeat(10, 45px);
+    grid-template-columns: repeat(10, 45px);
+    justify-content: center;
+    column-gap: auto;
+    gap: 5px;
 }
 
 .game-container {
     display: flex;
-    /* Use flexbox to arrange left and right containers */
+    /* width: 50vw; */
 }
 
-.left-content {
+.left-container {
     /* border: 2px solid red; */
     display: flex;
-    width: 20vw;
+    flex: 6;
+    /* width: 60vw; */
     flex-direction: column;
-    align-items: center;
+    height: 75vh;
+    margin-top: 2rem;
     justify-content: center;
+    align-items: center;
 }
 
-.game-board {
+.left-upper-container {
+    /* border: 2px solid green; */
+    width: 50vw;
+    /* margin: 1rem; */
+    flex: 9;
+    /* Takes 80% of the available vertical space */
+}
+
+.left-bottom-container {
+    border: 2px solid darkorchid;
+    width: 50vw;
+    /* margin-bottom: 1rem; */
+    flex: 1;
+    /* Takes 20% of the available vertical space */
+}
+
+
+.right-container {
     /* border: 2px solid blue; */
-    width: 70vw;
-    /* Make it twice as wide as the left content */
-    /* Add other styles for your game board here */
+    flex: 4;
+    /* width: 80vw; */
 }
 
 .cheatBtn {
@@ -35,26 +67,41 @@
     margin-right: .5rem;
 }
 
-
-/* .cheatSection {
-    height: 50vh;
-} */
-
 .playBtnSection {
-    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.textArea {
+.text-area {
+    display: flex;
     border: 2px solid brown;
-    padding: 2rem;
-    margin: 1rem;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.text-box {
+    margin-left: .5rem;
+    margin-right: .5rem;
 }
 
 .box {
     border: 2px solid brown;
     margin: 4px;
-    width: 50px;
-    height: 50px;
+    width: 65px;
+    height: 65px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cheat-box {
+    border: 2px solid brown;
+    margin: 4px;
+    width: 45px;
+    height: 45px;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
