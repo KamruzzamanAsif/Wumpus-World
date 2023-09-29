@@ -28,6 +28,7 @@ const Grid = () => {
   function resetBoard() {
     play.resetGameEnvironment();
     setBoard([...play.getBoard()]);
+    setFinalMessage("");
   }
 
   const moveAgent = async () => {
@@ -48,6 +49,7 @@ const Grid = () => {
 
         setBoard([...play.getBoard()]);
         isMoving = isMoving - 1;
+        console.log("GOLD: ", play.goldCount, play.discoveredGold);
 
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -73,7 +75,7 @@ const Grid = () => {
       }
     }
 
-    isMoving = 1225;
+    isMoving = 1500;
     makeNextMove();
   };
 

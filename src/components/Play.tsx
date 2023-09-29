@@ -1103,7 +1103,6 @@ export class Play {
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
     ];
-    this.gameOnInit(3, 5, 2, "");
     this.agentIndex = { row: 9, column: 0 };
     this.currentIndex = { row: 9, column: 0 };
     // count things
@@ -1131,6 +1130,7 @@ export class Play {
 
     // this is cheat mode
     this.cheatOn = false;
+    this.gameOnInit(3, 5, 2, "");
   }
 }
 
