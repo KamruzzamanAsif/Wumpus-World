@@ -8,23 +8,24 @@ function CheatCell({ id, x, y }) {
   const isAgentCell = agent_x === x && agent_y === y;
   let backgroundColor = "";
 
+
   if (id === 0.25) {
     backgroundColor = "orange";
   } else if (id === 0.5) {
-    backgroundColor = "red";
+    backgroundColor = "tomato";
   } else if (id > 0.5) {
-    backgroundColor = "darkred";
+    backgroundColor = "crimson";
   } else {
     if (isAgentCell) {
-      backgroundColor = "brown";
+      backgroundColor = "blue";
     }
   }
 
   const cellStyle = {
     fontWeight: isAgentCell ? "bold" : "normal",
     backgroundColor: backgroundColor,
-    width: isAgentCell ? "39px" : "",
-    height: isAgentCell ? "39px" : "",
+    width: "39px",
+    height: "39px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

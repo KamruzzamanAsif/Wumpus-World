@@ -1,8 +1,17 @@
+/* eslint-disable react/prop-types */
 import { play } from "./Play";
 
 // eslint-disable-next-line react/prop-types
 function Cell({ id, cheatMode, x, y }) {
   let imgid, imageSize;
+
+  const agent_x = play.agentIndex.row;
+  const agent_y = play.agentIndex.column;
+
+  const isAgentCell = agent_x === x && agent_y === y;
+  if (isAgentCell) {
+    id = "A";
+  }
 
   // eslint-disable-next-line react/prop-types
   if (id.length > 1) {
@@ -12,32 +21,38 @@ function Cell({ id, cheatMode, x, y }) {
       id == "TBG" ||
       id == "BTG" ||
       id == "TBS" ||
-      id == "SBS"
+      id == "SBS" ||
+      (id.includes("T") && id.includes("B"))
     ) {
       id = "TB";
     }
-    if (id == "TG" || id == "GT") {
+    if (id == "TG" || id == "GT" || (id.includes("T") && id.includes("G"))) {
       id = "TG";
     }
-    if (id == "BG" || id == "GB") {
+    if (id == "BG" || id == "GB" || (id.includes("G") && id.includes("B"))) {
       id = "BG";
     }
-    if (id == "SG" || id == "GS" || id == "SGG" || id == "SSG") {
+    if (
+      id == "SG" ||
+      id == "GS" ||
+      id == "SGG" ||
+      id == "SSG" ||
+      (id.includes("G") && id.includes("G"))
+    ) {
       id = "G";
     }
-    if (id == "" || id == "SS" || id == "") {
+    if (id == "" || id == "SS" || id == "" || id.includes("S")) {
       id = "S";
     }
-    if (id == "SB" || id == "BS") {
+    if (id == "SB" || id == "BS" || (id.includes("B") && id.includes("S"))) {
       id = "B";
     }
-    if (id == "TS") {
+    if (id == "TS" || (id.includes("T") && id.includes("S"))) {
       id = "T";
     }
-    if (id == "WT" || id == "TW") {
+    if (id == "WT" || id == "TW" || (id.includes("T") && id.includes("W"))) {
       id = "W";
     }
-    // eslint-disable-next-line react/prop-types
     if (id.includes("P")) {
       id = "P";
     }

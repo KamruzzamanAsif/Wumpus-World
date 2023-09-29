@@ -187,9 +187,9 @@ export class Boards {
     }
   }
 
-  updateBoard(agentPosition) {
-    let next_x = agentPosition.row;
-    let next_y = agentPosition.column;
+  updateBoard(next_step) {
+    let next_x = next_step.row;
+    let next_y = next_step.column;
 
     let cur_x = play.currentIndex.row;
     let cur_y = play.currentIndex.column;

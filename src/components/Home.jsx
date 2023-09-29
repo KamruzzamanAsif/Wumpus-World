@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import "../styles/Button.css";
 import "../styles/Grid.css";
 import { boards } from "./Boards";
 import Cell from "./Cell";
@@ -15,7 +16,7 @@ import { play } from "./Play";
 
 const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
-  const [board, setBoard] = useState(boards.initialGrid);
+  const [board, setBoard] = useState(play.getBoard());
   const [playmode, setPlayMode] = useState(false);
   const [finalMessage, setFinalMessage] = useState("");
 
@@ -25,24 +26,13 @@ const Grid = () => {
     setCheatMode(!cheatMode);
   }
 
-  // function resetBoard() {
-  //   console.log("inside reset", play.isGameOver(), play.agentIndex);
-  //   play.gameOver = false;
-  //   play.agentIndex.row = 0;
-  //   play.agentIndex.column = 0;
-  //   play.resetCellVisitedArray();
-  //   console.log("inside reset", play.isGameOver(), play.cellVisited);
-
-  //   // agent index issue
-  //   setBoard(boards.initialGrid);
-  //   setPlayMode(false);
-  //   console.log(boards.initialGrid);
-  // }
+  function resetBoard() {
+    play.resetGameEnvironment();
+    setBoard(play.getBoard());
+  }
 
   const moveAgent = async () => {
     setPlayMode(true);
-
-    // TOOD: RESET BUTTON
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
@@ -52,7 +42,7 @@ const Grid = () => {
         boards.updateBoard(play.agentIndex);
         boards.setBoard(play.getBoard());
         if (play.isShoot) {
-          setFinalMessage("Wumpus Shooted at ");
+          setFinalMessage("Wumpus Shooted");
         }
         console.log("PTN: ", play.point);
         console.log("PROB of PIT: ", play.pitProbability);
@@ -61,7 +51,7 @@ const Grid = () => {
         console.log("CHEAT: ", play.cboard);
         // ****** New MOVE ********
 
-        setBoard([...boards.getBoard()]);
+        setBoard([...play.getBoard()]);
         isMoving = isMoving - 1;
 
         // Wait for a short period before making the next move
@@ -69,19 +59,11 @@ const Grid = () => {
 
         if (play.isGameOver()) {
           if (play.isYouWin()) {
-            // console.log("Wuhhu! You Collected all Golds");
             setFinalMessage("Wuhhu! You Collected all Golds");
             // play.board[play.agentIndex.row][play.agentIndex.col] = "S";
-            setBoard([...boards.getBoard()]);
+            setBoard([...play.getBoard()]);
             isMoving = 0;
           } else if (play.isYouLose()) {
-            // console.log(
-            //   "Nooo! You Lost! (" +
-            //     ")You fall into Pit => " +
-            //     play.agentIndex.row +
-            //     ", " +
-            //     play.agentIndex.column
-            // );
             setFinalMessage(
               "Nooo! You Lost! You fall into Pit => " +
                 play.agentIndex.row +
@@ -100,17 +82,12 @@ const Grid = () => {
     makeNextMove();
   };
 
-  // re-render the UI when agent make move
-  useEffect(() => {
-    setBoard([...boards.getBoard()]);
-  }, []);
-
   //! Configured the Board for View [Dont' Dare to touch it]
   const grid = [];
   for (let r = 0; r < 10; r++) {
     const row = [];
     for (let c = 0; c < 10; c++) {
-      row.push(board[c][r]);
+      row.push(play.getBoard()[c][r]);
     }
     grid.push(row);
   }
@@ -141,16 +118,33 @@ const Grid = () => {
         }}
       >
         <div className="left-upper-container">
+          <div className="grid-heading">
+            <div className="wumpus-board-heading">Wumpus Probability</div>
+            <div className="pit-board-heading">Pit Probability</div>
+          </div>
           <div className="cheat-board">
-            {wumpusProb.map((col, colIndex) => (
-              <div key={colIndex} className="row">
-                {col.map((cell, rowIndex) => (
-                  <div key={rowIndex} className="cheat-box">
-                    <CheatCell id={cell} x={rowIndex} y={colIndex} />
-                  </div>
-                ))}
-              </div>
-            ))}
+            <div className="wumpus-board">
+              {wumpusProb.map((col, colIndex) => (
+                <div key={colIndex} className="row">
+                  {col.map((cell, rowIndex) => (
+                    <div key={rowIndex} className="cheat-box">
+                      <CheatCell id={cell} x={rowIndex} y={colIndex} />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="pit-board">
+              {pitProb.map((col, colIndex) => (
+                <div key={colIndex} className="row">
+                  {col.map((cell, rowIndex) => (
+                    <div key={rowIndex} className="cheat-box">
+                      <CheatCell id={cell} x={rowIndex} y={colIndex} />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="left-bottom-container">
@@ -170,37 +164,40 @@ const Grid = () => {
             </h2>
           </div>
         </div>
-        <div>
-          {/* <button className="cheatBtn" onClick={resetBoard}>
-            Reset
-          </button> */}
-        </div>
+        <div></div>
         <div className="playBtnSection">
           {!playmode ? (
-            <button className="cheatBtn" onClick={moveAgent}>
+            <button className="custom-btn" onClick={moveAgent}>
               Play
             </button>
           ) : (
-            <button disabled className="cheatBtn" onClick={moveAgent}>
+            <button disabled className="custom-btn" onClick={moveAgent}>
               Play
             </button>
           )}
-          <button className="cheatBtn" onClick={toggleCheatMode}>
+          <button className="custom-btn" onClick={toggleCheatMode}>
             {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
           </button>
-          <h2 className="text-box" style={{ color: "blueviolet" }}>
-            {finalMessage}
-          </h2>
+
+          <button className="custom-btn" onClick={resetBoard}>
+            Reset
+          </button>
           {/* <button
             className="cheatBtn"
             onClick={() => {
               boards.setRandomBoard();
               setBoard([...boards.getBoard()]);
             }}
-          >
+            >
             Generate Board
           </button> */}
         </div>
+        <h2
+          className="text-box"
+          style={{ color: "darkgreen", marginTop: "2rem" }}
+        >
+          {finalMessage}
+        </h2>
       </div>
 
       <div className="right-container">
