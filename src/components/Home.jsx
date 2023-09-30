@@ -8,10 +8,10 @@ import CheatCell from "./CheatCell";
 import { play } from "./Play";
 
 import useSound from "use-sound";
-import playSound from "../assets/playSound.mp3"
-import movementSound from "../assets/movementSound.mp3"
-import winSound from "../assets/winSound.mp3"
-import loseSound from "../assets/loseSound.mp3"
+import loseSound from "../assets/loseSound.mp3";
+import movementSound from "../assets/movementSound.mp3";
+import playSound from "../assets/playSound.mp3";
+import winSound from "../assets/winSound.mp3";
 
 /**
  * NEED TO FIX:
@@ -123,16 +123,15 @@ const Grid = () => {
       reader.readAsText(blob);
       currentPosition += chunkSize;
     };
-    
+
     // Start reading the first chunk of data
     readNextChunk();
   };
-  
+
   const [playBtnSound] = useSound(playSound);
   const [moveSound] = useSound(movementSound);
   const [winningSound] = useSound(winSound);
   const [losingSound] = useSound(loseSound);
-
 
   const moveAgent = async () => {
     playBtnSound();
@@ -142,7 +141,7 @@ const Grid = () => {
     async function makeNextMove() {
       if (isMoving > 0 && !play.isGameOver()) {
         // ****** NEW GAME ********
-      // moveSound();
+        // moveSound();
 
         play.makeMove();
         boards.updateBoard(play.agentIndex);
@@ -207,8 +206,6 @@ const Grid = () => {
     pitProb.push(row);
     wumpusProb.push(row2);
   }
-
-
 
   // view
   return (
