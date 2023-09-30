@@ -45,18 +45,20 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: start;
 }
 
 .valueCover {
-    /* border: 2px solid blue; */
+    border-right: 3px dashed blue;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: .1rem;
     margin: .5rem 0;
+    padding-right: 4rem;
+
 }
 
 
@@ -90,9 +92,8 @@
     /* Adjust flex value */
     display: flex;
     gap: 2rem;
+    justify-content: left;
 }
-
-
 
 
 .right-container {
@@ -116,13 +117,13 @@
     justify-content: left;
     align-items: left;
     gap: 1rem;
-    width: 20%;
-    margin-top: 1rem;
+    width: 40%;
+    margin: 1rem 0;
 }
 
 .text-area {
     display: flex;
-    border: 2px solid brown;
+    border-left: 3px dashed brown;
     flex-direction: column;
     justify-content: space-evenly;
 }
@@ -130,7 +131,32 @@
 .text-box {
     margin-left: .5rem;
     margin-right: .5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    padding-right: 10rem;
+    background-color: gainsboro;
+    border-radius: 2rem;
+    padding-left: 2rem;
+    margin-left: 3rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    width: 50%;
+}
+
+.upload-group {
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 1rem;
+    padding: .5rem 1rem;
+    background-color: #FEE6E3;
+    color: black;
+}
+
+.gameState {
+    /* border: 2px solid blue; */
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 40rem;
+    justify-content: space-around;
 }
 
 .box {
@@ -145,7 +171,7 @@
 }
 
 .alert-box {
-    background-color: bisque;
+    background-color: burlywood;
     padding: 1rem 16rem;
     border-radius: 2rem;
 }

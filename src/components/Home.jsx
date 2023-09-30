@@ -32,9 +32,10 @@ const Grid = () => {
     setCheatMode(!cheatMode);
   }
 
+  //reset board should be updated
+
   function resetBoard() {
     play.resetGameEnvironment();
-    console.log(latestWumpus, latestPit, latestGold);
     play.gameOnInit(latestWumpus, latestPit, latestGold, "Easy"); // Update game parameters
     setFinalMessage("");
     setBoard([...play.getBoard()]); // Update the board
@@ -239,70 +240,72 @@ const Grid = () => {
           </div>
         </div>
         <div className="left-bottom-container">
-          <div className="inputBtn">
-            <div className="valueCover">
-              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
-                Wumpus Count 😈
-              </h2>
-              <div className="value">{wumpusCnt}</div>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                step="1"
-                value={wumpusCnt}
-                onChange={handleWumpusCnt}
-              />
+          <div className="gameState">
+            <div className="inputBtn">
+              <div className="valueCover">
+                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                  Wumpus Count 😈
+                </h2>
+                <div className="value">{wumpusCnt}</div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={wumpusCnt}
+                  onChange={handleWumpusCnt}
+                />
+              </div>
+              <div className="valueCover">
+                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                  Pit Count 🕳️
+                </h2>
+                <div className="value">{pitCnt}</div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={pitCnt}
+                  onChange={handlePitCnt}
+                />
+              </div>
+              <div className="valueCover">
+                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                  Gold Count 🧈
+                </h2>
+                <div className="value">{goldCnt}</div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={goldCnt}
+                  onChange={handleGoldCnt}
+                />
+              </div>
             </div>
-            <div className="valueCover">
-              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
-                Pit Count 🕳️
-              </h2>
-              <div className="value">{pitCnt}</div>
-              <input
-                type="range"
-                min="1"
-                max="10"
-                step="1"
-                value={pitCnt}
-                onChange={handlePitCnt}
-              />
-            </div>
-            <div className="valueCover">
-              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
-                Gold Count 🧈
-              </h2>
-              <div className="value">{goldCnt}</div>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                step="1"
-                value={goldCnt}
-                onChange={handleGoldCnt}
-              />
-            </div>
-          </div>
-          <div className="playBtnSection">
-            <button className="custom-btn" onClick={moveAgent}>
-              Play
-            </button>
-            <button className="custom-btn" onClick={toggleCheatMode}>
-              {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
-            </button>
+            <div className="playBtnSection">
+              <button className="custom-btn" onClick={moveAgent}>
+                Play
+              </button>
+              <button className="custom-btn" onClick={toggleCheatMode}>
+                {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
+              </button>
 
-            <button className="custom-btn" onClick={resetBoard}>
-              Reset
-            </button>
+              <button className="custom-btn" onClick={resetBoard}>
+                Reset
+              </button>
 
-            <div className="form-group" style={{ marginTop: "1.2rem" }}>
-              <label htmlFor="customBoard">Upload Board </label>
-              <input
-                className="form-field"
-                type="file"
-                name="customBoard"
-                onChange={(e) => uploadBoard(e)}
-              />
+              <div className="upload-group" style={{ marginTop: "1.2rem" }}>
+                <label htmlFor="customBoard">Upload Board </label>
+                <input
+                  className="form-field"
+                  type="file"
+                  name="customBoard"
+                  onChange={(e) => uploadBoard(e)}
+                />
+              </div>
             </div>
           </div>
           <div className="text-area">
@@ -327,7 +330,7 @@ const Grid = () => {
         <div>
           <h2
             className="alert-box"
-            style={{ color: "darkgreen", marginTop: "2rem" }}
+            style={{ color: "black", marginTop: "2rem" }}
           >
             {finalMessage}
           </h2>

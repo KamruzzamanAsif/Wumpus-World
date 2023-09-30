@@ -52,15 +52,6 @@
     outline: 0;
 }
 
-/* Added styles for disabled button */
-/* .custom-btn:disabled {
-    background-color: #ccc;
-    /* Change the background color for disabled state */
-/* color: #666; */
-/* Change the text color for disabled state */
-/* cursor: not-allowed; */
-/* Change cursor to not-allowed for disabled state }*/
-
 @media (min-width: 768px) {
     .custom-btn {
         padding: 0 40px;
