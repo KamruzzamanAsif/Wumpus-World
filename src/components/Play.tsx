@@ -24,6 +24,7 @@ export class Play {
   youWin = false;
   youLose = false;
   gameOverLine = "";
+  isGoldFound = false;
 
   // this is cheat mode
   cheatOn = false;
@@ -266,6 +267,7 @@ export class Play {
       this.busy = true;
       this.discoveredGold += 1;
       this.point += 1000;
+      this.isGoldFound = true;
 
       // this will execute a bit later, so that we can see the gold being taken
       setTimeout(() => {

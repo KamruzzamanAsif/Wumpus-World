@@ -125,21 +125,21 @@
     margin: 1rem 0;
 }
 
-/* .text-area {
+.text-area {
     display: flex;
     border-left: 3px dashed brown;
     flex-direction: column;
     justify-content: space-evenly;
-} */
-.text-area {
+    padding-left: 2rem;
+}
+/* .text-area {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
-    /* Increased gap between text boxes */
     border-left: 3px dashed brown;
     padding-left: 2rem;
     align-items: center;
-}
+} */
 
 .text-box {
     /* margin: 0.5rem; */
@@ -154,7 +154,7 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    width: 100%;
+    width: 120%;
     height: 3rem;
     /* Let the height adjust to content */
 }

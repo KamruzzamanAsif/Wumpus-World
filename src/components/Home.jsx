@@ -152,7 +152,10 @@ const Grid = () => {
 
         setBoard([...play.getBoard()]);
         isMoving = isMoving - 1;
-        console.log("GOLD: ", play.goldCount, play.discoveredGold);
+        if (play.isGoldFound) {
+          setFinalMessage(play.discoveredGold + " Gold Discovered");
+          play.isGoldFound = false;
+        }
 
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -325,9 +328,9 @@ const Grid = () => {
             <h2 className="text-box" style={{ color: "red" }}>
               🗡 Wumpus Killed: {play.wumpusKilled}
             </h2>
-            <h2 className="text-box" style={{ color: "brown" }}>
+            {/* <h2 className="text-box" style={{ color: "brown" }}>
               🕳 Pit: {play.pitCount}
-            </h2>
+            </h2> */}
             <h2 className="text-box" style={{ color: "orange" }}>
               🪙 Gold Collected: {play.discoveredGold}
             </h2>
