@@ -8,11 +8,11 @@ import CheatCell from "./CheatCell";
 import { play } from "./Play";
 
 import useSound from "use-sound";
-import playSound from "../assets/playSound.mp3"
-import movementSound from "../assets/movementSound.mp3"
-import winSound from "../assets/winSound.mp3"
-import loseSound from "../assets/loseSound.mp3"
-import shootSound from "../assets/shootSound.mp3"
+import loseSound from "../assets/loseSound.mp3";
+import movementSound from "../assets/movementSound.mp3";
+import playSound from "../assets/playSound.mp3";
+import shootSound from "../assets/shootSound.mp3";
+import winSound from "../assets/winSound.mp3";
 
 /**
  * NEED TO FIX:
@@ -37,7 +37,7 @@ const Grid = () => {
     setCheatMode(!cheatMode);
   }
 
-  //reset board should be updated
+  // reset board should be updated
 
   function resetBoard() {
     playBtnSound();
@@ -135,7 +135,6 @@ const Grid = () => {
   const [losingSound] = useSound(loseSound);
   const [shootingSound] = useSound(shootSound);
 
-
   const moveAgent = async () => {
     playBtnSound();
     console.log("HERE?");
@@ -152,7 +151,6 @@ const Grid = () => {
         boards.updateBoard(play.agentIndex);
         boards.setBoard(play.getBoard());
         if (play.isShoot) {
-          shootingSound();
           setFinalMessage("Wumpus Shooted");
         }
 
