@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../styles/Button.css";
 import "../styles/Grid.css";
+import "../styles/Slider.css";
 import { boards } from "./Boards";
 import Cell from "./Cell";
 import CheatCell from "./CheatCell";
@@ -18,6 +19,9 @@ const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(play.getBoard());
   const [finalMessage, setFinalMessage] = useState("");
+  const [wumpusCnt, setWumpusCnt] = useState(0);
+  const [pitCnt, setPitCnt] = useState(0);
+  const [goldCnt, setGoldCnt] = useState(0);
 
   let isMoving = 0;
 
@@ -28,8 +32,86 @@ const Grid = () => {
   function resetBoard() {
     play.resetGameEnvironment();
     setBoard([...play.getBoard()]);
+    play.gameOnInit(2, 4, 2, "");
     setFinalMessage("");
   }
+
+  function handleWumpusCnt(event) {
+    const newValue = event.target.value;
+    setWumpusCnt(newValue);
+  }
+
+  function handlePitCnt(event) {
+    const newValue = event.target.value;
+    setPitCnt(newValue);
+  }
+
+  function handleGoldCnt(event) {
+    const newValue = event.target.value;
+    setGoldCnt(newValue);
+  }
+
+  const uploadBoard = (e) => {
+    const file = e.target.files[0];
+    // setBoard([...play.initialBoard]);
+
+    // Create a new FileReader
+    const reader = new FileReader();
+
+    // Initialize variables to keep track of the read progress
+    let currentPosition = 0;
+    const chunkSize = 1024; // You can adjust this value to control the chunk size
+
+    // Initialize newBoard as an empty array
+    const newBoard = [];
+
+    reader.onload = (event) => {
+      const data = event.target.result;
+      const lines = data.split("\n"); // Split the data into lines
+
+      // Process each line
+      for (let i = 0; i < lines.length - 2; i++) {
+        const line = lines[i];
+        const row = [];
+
+        for (let j = 0; j < line.length - 1; j++) {
+          if (line[j] === "-") row.push("S");
+          else row.push(line[j]);
+        }
+
+        newBoard.push(row);
+      }
+
+      // If there are more lines to process, continue reading
+      if (currentPosition < file.size) {
+        readNextChunk();
+      } else {
+        // File reading is complete, you can now use newBoard
+        console.log("FILE: ", newBoard);
+        play.resetGameEnvironment();
+        play.setBoard(newBoard);
+        console.log(
+          play.wumpusCount,
+          play.pitCount,
+          play.goldCount,
+          play.difficulty
+        );
+        setBoard([...play.getBoard()]);
+        // play.initializeExternalBoards();
+        // TODO: Update board with given one
+      }
+    };
+
+    // Function to read the next chunk of data
+    const readNextChunk = () => {
+      const blob = file.slice(currentPosition, currentPosition + chunkSize);
+      reader.readAsText(blob);
+      currentPosition += chunkSize;
+    };
+
+    // Start reading the first chunk of data
+    readNextChunk();
+  };
 
   const moveAgent = async () => {
     console.log("HERE?");
@@ -56,16 +138,16 @@ const Grid = () => {
 
         if (play.isGameOver()) {
           if (play.isYouWin()) {
-            setFinalMessage("Wuhhu! You Collected all Golds");
+            setFinalMessage("🎉🎉 Wuhhu! You Collected all Golds 🎉🎉");
             // play.board[play.agentIndex.row][play.agentIndex.col] = "S";
             setBoard([...play.getBoard()]);
             isMoving = 0;
           } else if (play.isYouLose()) {
             setFinalMessage(
-              "Nooo! You Lost! You fall into Pit => " +
+              "🏳🏳 Nooo! You Lost! You fall into Pit => " +
                 play.agentIndex.row +
                 ", " +
-                play.agentIndex.column
+                play.agentIndex.column + "🏳🏳"
             );
           }
         } else {
@@ -145,8 +227,76 @@ const Grid = () => {
           </div>
         </div>
         <div className="left-bottom-container">
+          <div className="inputBtn">
+            <div className="valueCover">
+              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                Wumpus Count 😈
+              </h2>
+              <div className="value">{wumpusCnt}</div>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="1"
+                value={wumpusCnt}
+                onChange={handleWumpusCnt}
+              />
+            </div>
+            <div className="valueCover">
+              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                Pit Count 🕳️
+              </h2>
+              <div className="value">{pitCnt}</div>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="1"
+                value={pitCnt}
+                onChange={handlePitCnt}
+              />
+            </div>
+            <div className="valueCover">
+              <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                Gold Count 🧈
+              </h2>
+              <div className="value">{goldCnt}</div>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="1"
+                value={goldCnt}
+                onChange={handleGoldCnt}
+              />
+            </div>
+          </div>
+          <div className="playBtnSection">
+            <button className="custom-btn" onClick={moveAgent}>
+              Play
+            </button>
+            <button className="custom-btn" onClick={toggleCheatMode}>
+              {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
+            </button>
+
+            <button className="custom-btn" onClick={resetBoard}>
+              Reset
+            </button>
+
+            <div className="form-group" style={{ marginTop: "1.2rem" }}>
+              <label htmlFor="customBoard">Upload Board </label>
+              <input
+                className="form-field"
+                type="file"
+                name="customBoard"
+                onChange={(e) => uploadBoard(e)}
+              />
+            </div>
+          </div>
           <div className="text-area">
-            <h2 style={{ color: "green" }}>Points: {play.point}</h2>
+            <h2 className="text-box" style={{ color: "green" }}>
+              Points: {play.point}
+            </h2>
             <h2 className="text-box" style={{ color: "red" }}>
               Wumpus Killed: {play.wumpusKilled}
             </h2>
@@ -161,37 +311,19 @@ const Grid = () => {
             </h2>
           </div>
         </div>
-        <div></div>
-        <div className="playBtnSection">
-          <button className="custom-btn" onClick={moveAgent}>
-            Play
-          </button>
-          <button className="custom-btn" onClick={toggleCheatMode}>
-            {cheatMode ? "Cheat Mode ON" : "Cheat Mode OFF"}
-          </button>
 
-          <button className="custom-btn" onClick={resetBoard}>
-            Reset
-          </button>
-          {/* <button
-            className="cheatBtn"
-            onClick={() => {
-              boards.setRandomBoard();
-              setBoard([...boards.getBoard()]);
-            }}
-            >
-            Generate Board
-          </button> */}
+        <div>
+          <h2
+            className="alert-box"
+            style={{ color: "darkgreen", marginTop: "2rem" }}
+          >
+            {finalMessage}
+          </h2>
         </div>
-        <h2
-          className="text-box"
-          style={{ color: "darkgreen", marginTop: "2rem" }}
-        >
-          {finalMessage}
-        </h2>
       </div>
 
       <div className="right-container">
+        <div className="title">Wumpus World</div>
         <div className="game-board">
           {grid.map((col, colIndex) => (
             <div key={colIndex} className="row">
