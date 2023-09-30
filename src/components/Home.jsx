@@ -12,18 +12,14 @@ import playSound from "../assets/playSound.mp3"
 import movementSound from "../assets/movementSound.mp3"
 import winSound from "../assets/winSound.mp3"
 import loseSound from "../assets/loseSound.mp3"
-import shootSound from "../assets/shootSound.mp3"
 
 /**
  * NEED TO FIX:
- * 2. LOOP ERROR in PIT LOOP (NEGATIVE INDEX)
- * 3. REMOVE THE LAST GOLD AFTER FOUND
- * 4. STECH ERROR
- * 5. LOAD IMAGE (WB, )
  */
 
 const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [board, setBoard] = useState(play.getBoard());
   const [finalMessage, setFinalMessage] = useState("");
   const [wumpusCnt, setWumpusCnt] = useState(3);
@@ -53,7 +49,6 @@ const Grid = () => {
   function handleWumpusCnt(event) {
     const newValue = event.target.value;
     latestWumpus = newValue;
-    console.log("W: ", latestWumpus);
     setWumpusCnt(newValue);
     resetBoard();
   }
@@ -73,8 +68,8 @@ const Grid = () => {
   }
 
   const uploadBoard = (e) => {
+    resetBoard();
     const file = e.target.files[0];
-    // setBoard([...play.initialBoard]);
 
     // Create a new FileReader
     const reader = new FileReader();
@@ -107,7 +102,7 @@ const Grid = () => {
       if (currentPosition < file.size) {
         readNextChunk();
       } else {
-        // File reading is complete, you can now use newBoard
+        //? File reading is complete, you can now use newBoard
         console.log("FILE: ", newBoard);
         play.resetGameEnvironment();
         play.setBoard(newBoard);
@@ -118,7 +113,6 @@ const Grid = () => {
           play.difficulty
         );
         setBoard([...play.getBoard()]);
-        // play.initializeExternalBoards();
         // TODO: Update board with given one
       }
     };
@@ -129,17 +123,15 @@ const Grid = () => {
       reader.readAsText(blob);
       currentPosition += chunkSize;
     };
-    
+
     // Start reading the first chunk of data
     readNextChunk();
   };
-  
+
   const [playBtnSound] = useSound(playSound);
   const [moveSound] = useSound(movementSound);
   const [winningSound] = useSound(winSound);
   const [losingSound] = useSound(loseSound);
-  const [shootingSound] = useSound(shootSound);
-  const [shotFired, setShotFired] = useState(false);
 
 
   const moveAgent = async () => {
@@ -152,7 +144,7 @@ const Grid = () => {
         //!shoot sound needs fixing
         // setShotFired(false);
         // ****** NEW GAME ********
-      // moveSound();
+        // moveSound();
 
         play.makeMove();
         boards.updateBoard(play.agentIndex);
@@ -161,13 +153,16 @@ const Grid = () => {
           shootingSound();
           setShotFired(true); // Mark that a shot has been fired
           setFinalMessage("Wumpus Shooted");
-        }        
+        }
 
         // ****** New MOVE ********
 
         setBoard([...play.getBoard()]);
         isMoving = isMoving - 1;
-        console.log("GOLD: ", play.goldCount, play.discoveredGold);
+        if (play.isGoldFound) {
+          setFinalMessage(play.discoveredGold + " Gold Discovered");
+          play.isGoldFound = false;
+        }
 
         // Wait for a short period before making the next move
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -176,7 +171,6 @@ const Grid = () => {
           if (play.isYouWin()) {
             winningSound();
             setFinalMessage("🎉🎉 Wuhhu! You Collected all Golds 🎉🎉");
-            // play.board[play.agentIndex.row][play.agentIndex.col] = "S";
             setBoard([...play.getBoard()]);
             isMoving = 0;
           } else if (play.isYouLose()) {
@@ -222,8 +216,6 @@ const Grid = () => {
     pitProb.push(row);
     wumpusProb.push(row2);
   }
-
-
 
   // view
   return (
@@ -338,19 +330,19 @@ const Grid = () => {
           </div>
           <div className="text-area">
             <h2 className="text-box" style={{ color: "green" }}>
-              Points: {play.point}
+              🏅 Points: {play.point}
             </h2>
             <h2 className="text-box" style={{ color: "red" }}>
-              Wumpus Killed: {play.wumpusKilled}
+              🗡 Wumpus Killed: {play.wumpusKilled}
             </h2>
-            <h2 className="text-box" style={{ color: "brown" }}>
-              Pit: {play.pitCount}
-            </h2>
-            <h2 className="text-box" style={{ color: "goldenrod" }}>
-              Gold Collected: {play.discoveredGold}
+            {/* <h2 className="text-box" style={{ color: "brown" }}>
+              🕳 Pit: {play.pitCount}
+            </h2> */}
+            <h2 className="text-box" style={{ color: "orange" }}>
+              🪙 Gold Collected: {play.discoveredGold}
             </h2>
             <h2 className="text-box" style={{ color: "blue" }}>
-              Moves: {play.moveCount}
+              🏃 Moves: {play.moveCount}
             </h2>
           </div>
         </div>

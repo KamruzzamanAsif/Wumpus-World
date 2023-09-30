@@ -49,6 +49,7 @@
     align-items: start;
 }
 
+
 .valueCover {
     border-right: 3px dashed blue;
     display: flex;
@@ -58,6 +59,7 @@
     gap: .1rem;
     margin: .5rem 0;
     padding-right: 4rem;
+    margin-left: 2rem;
 
 }
 
@@ -84,7 +86,7 @@
 }
 
 .left-bottom-container {
-    /* border: 2px solid darkorchid; */
+    /* border: 2.5px dotted darkorchid; */
     width: 80%;
     /* Adjust if necessary */
     margin-top: 1rem;
@@ -93,6 +95,7 @@
     display: flex;
     gap: 2rem;
     justify-content: left;
+    padding: 0.1rem;
 }
 
 
@@ -100,6 +103,10 @@
     /* border: 2px solid blue; */
     margin-top: 1rem;
     flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     /* width: 80vw; */
 }
 
@@ -126,28 +133,45 @@
     border-left: 3px dashed brown;
     flex-direction: column;
     justify-content: space-evenly;
+    padding-left: 2rem;
 }
 
-.text-box {
-    margin-left: .5rem;
-    margin-right: .5rem;
-    font-size: 1.1rem;
-    padding-right: 10rem;
-    background-color: gainsboro;
-    border-radius: 2rem;
+/* .text-area {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    border-left: 3px dashed brown;
     padding-left: 2rem;
-    margin-left: 3rem;
-    padding-top: .5rem;
-    padding-bottom: .5rem;
-    width: 50%;
+    align-items: center;
+} */
+
+.text-box {
+    /* margin: 0.5rem; */
+    font-size: 1.2rem;
+    /* Decreased font size */
+    padding: 0.5rem;
+    /* Decreased padding */
+    background-color: gainsboro;
+    border-radius: 1rem;
+    /* Decreased border radius */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 120%;
+    height: 3rem;
+    /* Let the height adjust to content */
 }
+
+
 
 .upload-group {
     border: 2px solid rgb(0, 0, 0);
-    border-radius: 1rem;
+    border-radius: 8px;
     padding: .5rem 1rem;
     background-color: #FEE6E3;
     color: black;
+    box-shadow: 5px 5px 0 2px;
 }
 
 .gameState {
