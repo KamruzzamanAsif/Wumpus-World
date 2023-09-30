@@ -448,36 +448,40 @@ export class Play {
       // Create an array to store available directions
       const visitedAvailableDirections: number[] = [];
 
-      // Check if left is safe and add it to available directions
+      // Check if up is safe and add it to available directions
       if (
         this.agentIndex.row > 0 &&
         this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        visitedAvailableDirections.push(this.UP);
+        if(this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column] < 15)
+          visitedAvailableDirections.push(this.UP);
       }
 
-      // Check if down is safe and add it to available directions
+      // Check if left is safe and add it to available directions
       if (
         this.agentIndex.column > 0 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        visitedAvailableDirections.push(this.LEFT);
+        if(this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1] < 15)
+          visitedAvailableDirections.push(this.LEFT);
       }
 
-      // Check if right is safe and add it to available directions
+      // Check if down is safe and add it to available directions
       if (
         this.agentIndex.row < 9 &&
         this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        visitedAvailableDirections.push(this.DOWN);
+        if(this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column] < 15)
+          visitedAvailableDirections.push(this.DOWN);
       }
 
-      // Check if up is safe and add it to available directions
+      // Check if right is safe and add it to available directions
       if (
         this.agentIndex.column < 9 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        visitedAvailableDirections.push(this.RIGHT);
+        if(this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1] < 15)
+          visitedAvailableDirections.push(this.RIGHT);
       }
 
       if (visitedAvailableDirections.length > 0) {
@@ -877,60 +881,44 @@ export class Play {
       this.agentIndex.column > 0 &&
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
     ) {
-      if (pit) {
-        this.pitProbability[this.agentIndex.row][
-          this.agentIndex.column - 1
-        ] += 0.25;
+      if (pit == true) {
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] += 0.25;
       }
-      if (wumpus) {
-        this.wumpusProbability[this.agentIndex.row][
-          this.agentIndex.column - 1
-        ] += 0.25;
+      else {
+        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] += 0.25;
       }
     }
     if (
       this.agentIndex.column < 9 &&
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
     ) {
-      if (pit) {
-        this.pitProbability[this.agentIndex.row][
-          this.agentIndex.column + 1
-        ] += 0.25;
+      if (pit == true) {
+        this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] += 0.25;
       }
-      if (wumpus) {
-        this.wumpusProbability[this.agentIndex.row][
-          this.agentIndex.column + 1
-        ] += 0.25;
+      else{
+        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] += 0.25;
       }
     }
     if (
       this.agentIndex.row > 0 &&
       !this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
     ) {
-      if (pit) {
-        this.pitProbability[this.agentIndex.row - 1][
-          this.agentIndex.column
-        ] += 0.25;
+      if (pit == true) {
+        this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] += 0.25;
       }
-      if (wumpus) {
-        this.wumpusProbability[this.agentIndex.row - 1][
-          this.agentIndex.column
-        ] += 0.25;
+      else{
+        this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] += 0.25;
       }
     }
     if (
       this.agentIndex.row < 9 &&
       !this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
     ) {
-      if (pit) {
-        this.pitProbability[this.agentIndex.row + 1][
-          this.agentIndex.column
-        ] += 0.25;
+      if (pit == true) {
+        this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] += 0.25;
       }
-      if (wumpus) {
-        this.wumpusProbability[this.agentIndex.row + 1][
-          this.agentIndex.column
-        ] += 0.25;
+      else{
+        this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] += 0.25;
       }
     }
     // update the cell to danger
@@ -1078,7 +1066,7 @@ export class Play {
   }
 
   resetGameEnvironment() {
-    this.board = this.cboard = [
+    this.board = [
       ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
       ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
       ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
@@ -1090,8 +1078,35 @@ export class Play {
       ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
       ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
     ];
+    this.cboard = [
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ];
+
     this.resetCellVisitedArray();
-    this.pitProbability = this.wumpusProbability = [
+
+    this.nearDanger = [
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+    ];
+
+    this.pitProbability = [
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -1103,6 +1118,34 @@ export class Play {
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
     ];
+
+    this.wumpusProbability = [
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    ];
+
+    this.totalMoves = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    
+
     this.agentIndex = { row: 9, column: 0 };
     this.currentIndex = { row: 9, column: 0 };
     // count things
@@ -1130,7 +1173,7 @@ export class Play {
 
     // this is cheat mode
     this.cheatOn = false;
-    this.gameOnInit(3, 5, 2, "");
+    this.gameOnInit(3, 5, 2, "Easy");
   }
 }
 
