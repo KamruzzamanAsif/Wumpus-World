@@ -7,6 +7,12 @@ import Cell from "./Cell";
 import CheatCell from "./CheatCell";
 import { play } from "./Play";
 
+import useSound from "use-sound";
+import playSound from "../assets/playSound.mp3"
+import movementSound from "../assets/movementSound.mp3"
+import winSound from "../assets/winSound.mp3"
+import loseSound from "../assets/loseSound.mp3"
+
 /**
  * NEED TO FIX:
  * 2. LOOP ERROR in PIT LOOP (NEGATIVE INDEX)
@@ -29,12 +35,14 @@ const Grid = () => {
   let isMoving = 0;
 
   function toggleCheatMode() {
+    playBtnSound();
     setCheatMode(!cheatMode);
   }
 
   //reset board should be updated
 
   function resetBoard() {
+    playBtnSound();
     play.resetGameEnvironment();
     play.gameOnInit(latestWumpus, latestPit, latestGold, "Easy"); // Update game parameters
     setFinalMessage("");
@@ -120,18 +128,27 @@ const Grid = () => {
       reader.readAsText(blob);
       currentPosition += chunkSize;
     };
-
+    
     // Start reading the first chunk of data
     readNextChunk();
   };
+  
+  const [playBtnSound] = useSound(playSound);
+  const [moveSound] = useSound(movementSound);
+  const [winningSound] = useSound(winSound);
+  const [losingSound] = useSound(loseSound);
+
 
   const moveAgent = async () => {
+    playBtnSound();
     console.log("HERE?");
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
       if (isMoving > 0 && !play.isGameOver()) {
         // ****** NEW GAME ********
+      // moveSound();
+
         play.makeMove();
         boards.updateBoard(play.agentIndex);
         boards.setBoard(play.getBoard());
@@ -150,11 +167,13 @@ const Grid = () => {
 
         if (play.isGameOver()) {
           if (play.isYouWin()) {
+            winningSound();
             setFinalMessage("🎉🎉 Wuhhu! You Collected all Golds 🎉🎉");
             // play.board[play.agentIndex.row][play.agentIndex.col] = "S";
             setBoard([...play.getBoard()]);
             isMoving = 0;
           } else if (play.isYouLose()) {
+            losingSound();
             setFinalMessage(
               "🏳🏳 Nooo! You Lost! You fall into Pit => " +
                 play.agentIndex.row +
@@ -196,6 +215,8 @@ const Grid = () => {
     pitProb.push(row);
     wumpusProb.push(row2);
   }
+
+
 
   // view
   return (
