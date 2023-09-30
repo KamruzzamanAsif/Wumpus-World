@@ -37,7 +37,7 @@ function Cell({ id, cheatMode, x, y }) {
       id == "GS" ||
       id == "SGG" ||
       id == "SSG" ||
-      (id.includes("G") && id.includes("G"))
+      id.includes("G")
     ) {
       id = "G";
     }
@@ -55,6 +55,9 @@ function Cell({ id, cheatMode, x, y }) {
     }
     if (id.includes("P")) {
       id = "P";
+    }
+    if (id.includes("T") && id.includes("B") && id.includes("G")) {
+      id = "TBG";
     }
 
     imgid = `src/assets/${id}.png`;

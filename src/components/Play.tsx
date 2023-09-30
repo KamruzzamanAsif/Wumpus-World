@@ -180,15 +180,10 @@ export class Play {
   difficulty = "";
 
   /// this below methods will be called from outside
-  gameOnInit(
-    wumpusCount: any,
-    pitCount: any,
-    goldCouont: any,
-    difficulty: any
-  ) {
+  gameOnInit(wumpusCount: any, pitCount: any, goldCount: any, difficulty: any) {
     this.wumpusCount = wumpusCount;
     this.pitCount = pitCount;
-    this.goldCount = goldCouont;
+    this.goldCount = goldCount;
     this.difficulty = difficulty;
 
     if (this.difficulty == "Easy") {

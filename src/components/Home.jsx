@@ -19,9 +19,12 @@ const Grid = () => {
   const [cheatMode, setCheatMode] = useState(true);
   const [board, setBoard] = useState(play.getBoard());
   const [finalMessage, setFinalMessage] = useState("");
-  const [wumpusCnt, setWumpusCnt] = useState(0);
-  const [pitCnt, setPitCnt] = useState(0);
-  const [goldCnt, setGoldCnt] = useState(0);
+  const [wumpusCnt, setWumpusCnt] = useState(3);
+  const [pitCnt, setPitCnt] = useState(5);
+  const [goldCnt, setGoldCnt] = useState(2);
+  let latestWumpus = wumpusCnt;
+  let latestPit = pitCnt;
+  let latestGold = goldCnt;
 
   let isMoving = 0;
 
@@ -31,24 +34,32 @@ const Grid = () => {
 
   function resetBoard() {
     play.resetGameEnvironment();
-    setBoard([...play.getBoard()]);
-    play.gameOnInit(2, 4, 2, "");
+    console.log(latestWumpus, latestPit, latestGold);
+    play.gameOnInit(latestWumpus, latestPit, latestGold, "Easy"); // Update game parameters
     setFinalMessage("");
+    setBoard([...play.getBoard()]); // Update the board
   }
 
   function handleWumpusCnt(event) {
     const newValue = event.target.value;
+    latestWumpus = newValue;
+    console.log("W: ", latestWumpus);
     setWumpusCnt(newValue);
+    resetBoard();
   }
 
   function handlePitCnt(event) {
     const newValue = event.target.value;
+    latestPit = newValue;
     setPitCnt(newValue);
+    resetBoard();
   }
 
   function handleGoldCnt(event) {
     const newValue = event.target.value;
+    latestGold = newValue;
     setGoldCnt(newValue);
+    resetBoard();
   }
 
   const uploadBoard = (e) => {
@@ -147,7 +158,8 @@ const Grid = () => {
               "🏳🏳 Nooo! You Lost! You fall into Pit => " +
                 play.agentIndex.row +
                 ", " +
-                play.agentIndex.column + "🏳🏳"
+                play.agentIndex.column +
+                "🏳🏳"
             );
           }
         } else {
@@ -235,7 +247,7 @@ const Grid = () => {
               <div className="value">{wumpusCnt}</div>
               <input
                 type="range"
-                min="0"
+                min="1"
                 max="5"
                 step="1"
                 value={wumpusCnt}
@@ -249,8 +261,8 @@ const Grid = () => {
               <div className="value">{pitCnt}</div>
               <input
                 type="range"
-                min="0"
-                max="5"
+                min="1"
+                max="10"
                 step="1"
                 value={pitCnt}
                 onChange={handlePitCnt}
@@ -263,7 +275,7 @@ const Grid = () => {
               <div className="value">{goldCnt}</div>
               <input
                 type="range"
-                min="0"
+                min="1"
                 max="5"
                 step="1"
                 value={goldCnt}
