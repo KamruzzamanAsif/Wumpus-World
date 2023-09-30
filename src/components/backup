@@ -1,0 +1,160 @@
+const uploadBoard = (e) => {
+    const file = e.target.files[0];
+
+    // Create a new FileReader
+    const reader = new FileReader();
+
+    // Initialize variables to keep track of the read progress
+    let currentPosition = 0;
+    const chunkSize = 1024; // You can adjust this value to control the chunk size
+
+    // Initialize newBoard as an empty array
+    const newBoard = [];
+
+    reader.onload = (event) => {
+      const data = event.target.result;
+      const lines = data.split("\n"); // Split the data into lines
+
+      // Process each line
+      for (let i = 0; i < lines.length - 2; i++) {
+        const line = lines[i];
+        const row = [];
+
+        for (let j = 0; j < line.length - 1; j++) {
+          if (line[j] === "-") row.push("S");
+          else row.push(line[j]);
+        }
+
+        newBoard.push(row);
+      }
+
+      // If there are more lines to process, continue reading
+      if (currentPosition < file.size) {
+        readNextChunk();
+      } else {
+        // File reading is complete, you can now use newBoard
+        console.log("FILE: ", newBoard);
+        play.resetGameEnvironment();
+        play.setBoard(newBoard);
+        play.initializeExternalBoards();
+        setBoard([...play.getBoard()]);
+        // TODO: Update board with given one
+      }
+    };
+
+    // Function to read the next chunk of data
+    const readNextChunk = () => {
+      const blob = file.slice(currentPosition, currentPosition + chunkSize);
+      reader.readAsText(blob);
+      currentPosition += chunkSize;
+    };
+
+    // Start reading the first chunk of data
+    readNextChunk();
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  <div className="form-group" style={{ marginTop: "1.2rem" }}>
+            <label htmlFor="customBoard">Upload Board </label>
+            <input
+              className="form-field"
+              type="file"
+              name="customBoard"
+              onChange={(e) => uploadBoard(e)}
+            />
+          </div>
+
+
+
+
+
+
+
+
+
+input[type="file"] {
+    padding: 4px;
+    margin: -4px;
+    position: relative;
+    outline: none;
+
+    /* File Selector Button Styles */
+    &::file-selector-button {
+        border-radius: 4px;
+        padding: 0 16px;
+        height: 40px;
+        cursor: pointer;
+        background-color: antiquewhite;
+        border: 1px solid rgba(#000, 0.16);
+        box-shadow: 0px 1px 0px rgba(#000, 0.05);
+        margin-right: 16px;
+
+        /*
+        This is a hack to change the button label. 
+        I'm hiding the default label and then 
+        manually applying the width based on 
+        updated icon and label.
+      */
+        width: 132px;
+        color: transparent;
+bottom
+        /*
+        Firefox doesn't support the pseudo ::before 
+        or ::after elements on this input field so 
+        we need to use the @supports rule to enable 
+        default styles fallback for Firefox.
+      */
+        @supports (-moz-appearance: none) {
+            color: var(--primary-color);
+        }
+
+        &:hover {
+            background-color: rgb(250, 192, 121);
+        }
+
+        &:active {
+            background-color: bisque;
+        }
+    }
+
+    /* Faked label styles and icon */
+    &::before {
+        position: absolute;
+        pointer-events: none;
+        top: 14px;
+        left: 16px;
+        height: 20px;
+        width: 20px;
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+    }
+
+    &::after {
+        position: absolute;
+        pointer-events: none;
+        top: 16px;
+        left: 40px;
+        color: var(--primary-color);
+        content: "Upload File";
+    }
+
+    /* Handle Component Focus */
+    &:focus-within::file-selector-button,
+    &:focus::file-selector-button {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+}
+
+
+

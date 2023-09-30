@@ -51,7 +51,20 @@ export class Play {
           T - S(t)ench
           B - (B)reeze
           U - Both (Stech U Breeze) [ignore for now]
-    */
+*/
+
+  initialBoard = [
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+    ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
+  ];
 
   board = [
     ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S"],
@@ -167,15 +180,10 @@ export class Play {
   difficulty = "";
 
   /// this below methods will be called from outside
-  gameOnInit(
-    wumpusCount: any,
-    pitCount: any,
-    goldCouont: any,
-    difficulty: any
-  ) {
+  gameOnInit(wumpusCount: any, pitCount: any, goldCount: any, difficulty: any) {
     this.wumpusCount = wumpusCount;
     this.pitCount = pitCount;
-    this.goldCount = goldCouont;
+    this.goldCount = goldCount;
     this.difficulty = difficulty;
 
     if (this.difficulty == "Easy") {
@@ -926,6 +934,7 @@ export class Play {
   }
 
   init() {
+    console.log("INSIDE: ", this.board);
     // wumpus init
     for (let i = 0; i < this.wumpusCount; i++) {
       let row, col;
@@ -1054,6 +1063,25 @@ export class Play {
     }
 
     this.cboard = JSON.parse(JSON.stringify(this.board));
+    console.log("OUT: ", this.board);
+  }
+
+  setBoard(new_board) {
+    console.log("INITIAL: ", this.board);
+    this.board = this.initialBoard;
+    console.log("FIRST: ", this.board);
+
+    this.board = JSON.parse(JSON.stringify(new_board));
+    console.log("Second: ", this.board);
+
+    const { wCount, pCount, gCount } = this.countWumpusPitAndGold();
+    this.wumpusCount = wCount;
+    this.pitCount = pCount;
+    this.goldCount = gCount;
+    this.difficulty = "";
+    this.initialBoard = JSON.parse(JSON.stringify(this.board));
+    console.log("Third: ", this.initialBoard);
+    this.init();
   }
 
   getBoard() {
@@ -1173,7 +1201,31 @@ export class Play {
 
     // this is cheat mode
     this.cheatOn = false;
-    this.gameOnInit(3, 5, 2, "Easy");
+
+    console.log("RESETING ENV");
+  }
+
+  countWumpusPitAndGold() {
+    let wCount = 0;
+    let pCount = 0;
+    let gCount = 0;
+
+    for (let i = 0; i < this.board.length; i++) {
+      for (let j = 0; j < this.board.length; j++) {
+        if (this.board[i][j] == "W") wCount += 1;
+        else if (this.board[i][j] == "P") pCount += 1;
+        else if (this.board[i][j] == "G") gCount += 1;
+      }
+    }
+
+    return { wCount, pCount, gCount };
+  }
+
+  initializeExternalBoards() {
+    // count w,p,g
+    const { wCount, pCount, gCount } = this.countWumpusPitAndGold();
+    this.gameOnInit(wCount, pCount, gCount, "EasyEasy");
+    // init game
   }
 }
 
