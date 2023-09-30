@@ -461,7 +461,9 @@ export class Play {
         this.agentIndex.row > 0 &&
         this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
       ) {
-        if(this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column] < 15)
+        if (
+          this.totalMoves[this.agentIndex.row - 1][this.agentIndex.column] < 15
+        )
           visitedAvailableDirections.push(this.UP);
       }
 
@@ -470,7 +472,9 @@ export class Play {
         this.agentIndex.column > 0 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
       ) {
-        if(this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1] < 15)
+        if (
+          this.totalMoves[this.agentIndex.row][this.agentIndex.column - 1] < 15
+        )
           visitedAvailableDirections.push(this.LEFT);
       }
 
@@ -479,7 +483,9 @@ export class Play {
         this.agentIndex.row < 9 &&
         this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
       ) {
-        if(this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column] < 15)
+        if (
+          this.totalMoves[this.agentIndex.row + 1][this.agentIndex.column] < 15
+        )
           visitedAvailableDirections.push(this.DOWN);
       }
 
@@ -488,7 +494,9 @@ export class Play {
         this.agentIndex.column < 9 &&
         this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
       ) {
-        if(this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1] < 15)
+        if (
+          this.totalMoves[this.agentIndex.row][this.agentIndex.column + 1] < 15
+        )
           visitedAvailableDirections.push(this.RIGHT);
       }
 
@@ -890,10 +898,13 @@ export class Play {
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column - 1]
     ) {
       if (pit == true) {
-        this.pitProbability[this.agentIndex.row][this.agentIndex.column - 1] += 0.25;
-      }
-      else {
-        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column - 1] += 0.25;
+        this.pitProbability[this.agentIndex.row][
+          this.agentIndex.column - 1
+        ] += 0.25;
+      } else {
+        this.wumpusProbability[this.agentIndex.row][
+          this.agentIndex.column - 1
+        ] += 0.25;
       }
     }
     if (
@@ -901,10 +912,13 @@ export class Play {
       !this.cellVisited[this.agentIndex.row][this.agentIndex.column + 1]
     ) {
       if (pit == true) {
-        this.pitProbability[this.agentIndex.row][this.agentIndex.column + 1] += 0.25;
-      }
-      else{
-        this.wumpusProbability[this.agentIndex.row][this.agentIndex.column + 1] += 0.25;
+        this.pitProbability[this.agentIndex.row][
+          this.agentIndex.column + 1
+        ] += 0.25;
+      } else {
+        this.wumpusProbability[this.agentIndex.row][
+          this.agentIndex.column + 1
+        ] += 0.25;
       }
     }
     if (
@@ -912,10 +926,13 @@ export class Play {
       !this.cellVisited[this.agentIndex.row - 1][this.agentIndex.column]
     ) {
       if (pit == true) {
-        this.pitProbability[this.agentIndex.row - 1][this.agentIndex.column] += 0.25;
-      }
-      else{
-        this.wumpusProbability[this.agentIndex.row - 1][this.agentIndex.column] += 0.25;
+        this.pitProbability[this.agentIndex.row - 1][
+          this.agentIndex.column
+        ] += 0.25;
+      } else {
+        this.wumpusProbability[this.agentIndex.row - 1][
+          this.agentIndex.column
+        ] += 0.25;
       }
     }
     if (
@@ -923,10 +940,13 @@ export class Play {
       !this.cellVisited[this.agentIndex.row + 1][this.agentIndex.column]
     ) {
       if (pit == true) {
-        this.pitProbability[this.agentIndex.row + 1][this.agentIndex.column] += 0.25;
-      }
-      else{
-        this.wumpusProbability[this.agentIndex.row + 1][this.agentIndex.column] += 0.25;
+        this.pitProbability[this.agentIndex.row + 1][
+          this.agentIndex.column
+        ] += 0.25;
+      } else {
+        this.wumpusProbability[this.agentIndex.row + 1][
+          this.agentIndex.column
+        ] += 0.25;
       }
     }
     // update the cell to danger
@@ -1067,7 +1087,6 @@ export class Play {
   }
 
   setBoard(new_board) {
-    console.log("INITIAL: ", this.board);
     this.board = this.initialBoard;
     console.log("FIRST: ", this.board);
 
@@ -1081,7 +1100,90 @@ export class Play {
     this.difficulty = "";
     this.initialBoard = JSON.parse(JSON.stringify(this.board));
     console.log("Third: ", this.initialBoard);
-    this.init();
+
+    this.addPercept();
+  }
+
+  addPercept() {
+    console.log("FINAL: ", this.board);
+
+    // update relative cells to wumpus
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (this.board[row][col].includes("W")) {
+          if (col > 0) {
+            if (this.board[row][col - 1] == "S") {
+              this.board[row][col - 1] = "T";
+            } else if (this.board[row][col - 1] == "W") {
+              this.board[row][col - 1] += "T";
+            }
+          }
+
+          if (col < 9) {
+            if (this.board[row][col + 1] == "S") {
+              this.board[row][col + 1] = "T";
+            } else if (this.board[row][col + 1] == "W") {
+              this.board[row][col + 1] += "T";
+            }
+          }
+
+          if (row > 0) {
+            if (this.board[row - 1][col] == "S") {
+              this.board[row - 1][col] = "T";
+            } else if (this.board[row - 1][col] == "W") {
+              this.board[row - 1][col] += "T";
+            }
+          }
+
+          if (row < 9) {
+            if (this.board[row + 1][col] == "S") {
+              this.board[row + 1][col] = "T";
+            } else if (this.board[row + 1][col] == "W") {
+              this.board[row + 1][col] += "T";
+            }
+          }
+        }
+      }
+    }
+
+    // update relative cell to pits
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (this.board[row][col].includes("P")) {
+          if (col > 0) {
+            if (this.board[row][col - 1] == "S") {
+              this.board[row][col - 1] = "B";
+            } else if (!this.board[row][col - 1].includes("B")) {
+              this.board[row][col - 1] += "B";
+            }
+          }
+
+          if (col < 9) {
+            if (this.board[row][col + 1] == "S") {
+              this.board[row][col + 1] = "B";
+            } else if (!this.board[row][col + 1].includes("B")) {
+              this.board[row][col + 1] += "B";
+            }
+          }
+
+          if (row > 0) {
+            if (this.board[row - 1][col] == "S") {
+              this.board[row - 1][col] = "B";
+            } else if (!this.board[row - 1][col].includes("B")) {
+              this.board[row - 1][col] += "B";
+            }
+          }
+
+          if (row < 9) {
+            if (this.board[row + 1][col] == "S") {
+              this.board[row + 1][col] = "B";
+            } else if (!this.board[row + 1][col].includes("B")) {
+              this.board[row + 1][col] += "B";
+            }
+          }
+        }
+      }
+    }
   }
 
   getBoard() {
@@ -1172,7 +1274,6 @@ export class Play {
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
-    
 
     this.agentIndex = { row: 9, column: 0 };
     this.currentIndex = { row: 9, column: 0 };
