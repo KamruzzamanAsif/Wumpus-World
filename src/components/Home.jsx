@@ -12,6 +12,7 @@ import playSound from "../assets/playSound.mp3"
 import movementSound from "../assets/movementSound.mp3"
 import winSound from "../assets/winSound.mp3"
 import loseSound from "../assets/loseSound.mp3"
+import shootSound from "../assets/shootSound.mp3"
 
 /**
  * NEED TO FIX:
@@ -132,6 +133,7 @@ const Grid = () => {
   const [moveSound] = useSound(movementSound);
   const [winningSound] = useSound(winSound);
   const [losingSound] = useSound(loseSound);
+  const [shootingSound] = useSound(shootSound);
 
 
   const moveAgent = async () => {
@@ -149,9 +151,8 @@ const Grid = () => {
         play.makeMove();
         boards.updateBoard(play.agentIndex);
         boards.setBoard(play.getBoard());
-        if (play.isShoot && !shotFired) {
+        if (play.isShoot) {
           shootingSound();
-          setShotFired(true); // Mark that a shot has been fired
           setFinalMessage("Wumpus Shooted");
         }
 
