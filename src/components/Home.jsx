@@ -1,8 +1,8 @@
 import { useState } from "react";
+import "../styles/AgentMode.scss";
 import "../styles/Button.css";
 import "../styles/Grid.css";
 import "../styles/Slider.css";
-import { boards } from "./Boards";
 import Cell from "./Cell";
 import CheatCell from "./CheatCell";
 import { play } from "./Play";
@@ -26,9 +26,16 @@ const Grid = () => {
   const [wumpusCnt, setWumpusCnt] = useState(3);
   const [pitCnt, setPitCnt] = useState(5);
   const [goldCnt, setGoldCnt] = useState(2);
+  const [isDareDevilMode, setDareDevilMode] = useState(false);
+  const [playBtnSound] = useSound(playSound);
+  const [moveSound] = useSound(movementSound);
+  const [winningSound] = useSound(winSound);
+  const [losingSound] = useSound(loseSound);
+  const [shootingSound] = useSound(shootSound);
   let latestWumpus = wumpusCnt;
   let latestPit = pitCnt;
   let latestGold = goldCnt;
+  let difficultyMode = "";
 
   let isMoving = 0;
 
@@ -36,13 +43,12 @@ const Grid = () => {
     playBtnSound();
     setCheatMode(!cheatMode);
   }
-
   // reset board should be updated
 
   function resetBoard() {
     playBtnSound();
     play.resetGameEnvironment();
-    play.gameOnInit(latestWumpus, latestPit, latestGold, "Easy"); // Update game parameters
+    play.gameOnInit(latestWumpus, latestPit, latestGold, difficultyMode); // Update game parameters
     setFinalMessage("");
     setBoard([...play.getBoard()]); // Update the board
   }
@@ -66,6 +72,19 @@ const Grid = () => {
     latestGold = newValue;
     setGoldCnt(newValue);
     resetBoard();
+  }
+
+  function handleDareDevilMode() {
+    playBtnSound();
+    setDareDevilMode(!isDareDevilMode);
+    if (isDareDevilMode == false) {
+      difficultyMode = "Easy";
+      console.log(difficultyMode);
+    } else {
+      console.log(difficultyMode);
+    }
+
+    play.setDifficultyMode(difficultyMode);
   }
 
   const uploadBoard = (e) => {
@@ -129,15 +148,8 @@ const Grid = () => {
     readNextChunk();
   };
 
-  const [playBtnSound] = useSound(playSound);
-  const [moveSound] = useSound(movementSound);
-  const [winningSound] = useSound(winSound);
-  const [losingSound] = useSound(loseSound);
-  const [shootingSound] = useSound(shootSound);
-
   const moveAgent = async () => {
     playBtnSound();
-    console.log("HERE?");
 
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
@@ -148,8 +160,6 @@ const Grid = () => {
         // moveSound();
 
         play.makeMove();
-        boards.updateBoard(play.agentIndex);
-        boards.setBoard(play.getBoard());
         if (play.isShoot) {
           setFinalMessage("Wumpus Shooted");
         }
@@ -302,6 +312,30 @@ const Grid = () => {
                   value={goldCnt}
                   onChange={handleGoldCnt}
                 />
+              </div>
+              <div className="valueCover">
+                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                  Daredevil Mode 🥷
+                </h2>
+                <div className="toggle">
+                  <input
+                    className="toggle-input"
+                    type="checkbox"
+                    checked={isDareDevilMode}
+                    onChange={handleDareDevilMode}
+                  />
+                  <div className="toggle-handle-wrapper">
+                    <div className="toggle-handle">
+                      <div className="toggle-handle-knob"></div>
+                      <div className="toggle-handle-bar-wrapper">
+                        <div className="toggle-handle-bar"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="toggle-base">
+                    <div className="toggle-base-inside"></div>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="playBtnSection">

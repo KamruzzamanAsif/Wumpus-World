@@ -78,7 +78,7 @@
 }
 
 .left-upper-container {
-    /* border: 2px solid green; */
+    border: 2px solid green;
     width: 100%;
     /* margin: 1rem; */
     flex: 9;
@@ -86,7 +86,7 @@
 }
 
 .left-bottom-container {
-    /* border: 2.5px dotted darkorchid; */
+    border: 2.5px dotted darkorchid;
     width: 80%;
     /* Adjust if necessary */
     margin-top: 1rem;
@@ -94,14 +94,14 @@
     /* Adjust flex value */
     display: flex;
     gap: 2rem;
-    justify-content: left;
+    justify-content: center;
     padding: 0.1rem;
 }
 
 
 .right-container {
     /* border: 2px solid blue; */
-    margin-top: 1rem;
+    /* margin-top: 1rem; */
     flex: 4;
     display: flex;
     justify-content: center;

@@ -1,5 +1,7 @@
 export class Play {
-  constructor() {}
+  constructor() {
+    this.gameOnInit(3, 5, 2, "Easy");
+  }
 
   gridSize = 10;
 
@@ -186,6 +188,8 @@ export class Play {
     this.pitCount = pitCount;
     this.goldCount = goldCount;
     this.difficulty = difficulty;
+
+    console.log("MODE: ", this.difficulty);
 
     if (this.difficulty == "Easy") {
       this.threshold = 0.25;
@@ -1085,7 +1089,7 @@ export class Play {
     }
 
     this.cboard = JSON.parse(JSON.stringify(this.board));
-    console.log("OUT: ", this.board);
+    // console.log("OUT: ", this.board);
   }
 
   setBoard(new_board) {
@@ -1327,8 +1331,14 @@ export class Play {
   initializeExternalBoards() {
     // count w,p,g
     const { wCount, pCount, gCount } = this.countWumpusPitAndGold();
-    this.gameOnInit(wCount, pCount, gCount, "EasyEasy");
+    this.gameOnInit(wCount, pCount, gCount, "Easy");
     // init game
+  }
+
+  setDifficultyMode(mode) {
+    console.log("Cur MOde::", this.difficulty);
+    console.log("Cur Board:: ", this.board);
+    this.difficulty = mode;
   }
 }
 

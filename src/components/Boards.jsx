@@ -18,23 +18,24 @@ export class Boards {
     this.BOARD_SIZE = 10;
     this.modifiedCells = new Set();
     this.initialGrid;
+    this.difficultyMode = "Easy";
 
     this.initEnvironment();
-    this.grid = this.deepCopy(this.initialGrid);
+    // this.grid = this.deepCopy(this.initialGrid);
   }
 
   initEnvironment() {
-    play.gameOnInit(3, 5, 2, "Easy");
+    play.gameOnInit(1, 5, 1, this.difficultyMode);
 
-    this.cellVisited = Array.from({ length: this.BOARD_SIZE }, () =>
-      Array(this.BOARD_SIZE).fill(0)
-    );
+    // this.cellVisited = Array.from({ length: this.BOARD_SIZE }, () =>
+    //   Array(this.BOARD_SIZE).fill(0)
+    // );
 
-    play.cellVisited[0][0] = false;
-    play.cellVisited[9][0] = true;
-    this.initialGrid = this.deepCopy(play.board);
-    this.initialGrid[9][0] = "A";
-    return play.getBoard();
+    // play.cellVisited[0][0] = false;
+    // play.cellVisited[9][0] = true;
+    // this.initialGrid = this.deepCopy(play.board);
+    // this.initialGrid[9][0] = "A";
+    // return play.getBoard();
   }
 
   deepCopy(originalArray) {
