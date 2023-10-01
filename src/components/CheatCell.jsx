@@ -1,3 +1,4 @@
+import "../styles/Grid.css";
 import { play } from "./Play";
 
 // eslint-disable-next-line react/prop-types
@@ -37,7 +38,13 @@ function CheatCell({ id, x, y }) {
     color: isAgentCell ? "white" : "black",
   };
 
-  return <div style={cellStyle}>{id}</div>;
+  return (
+    <div
+      style={cellStyle}
+    >
+      {id}
+    </div>
+  );
 }
 
 export default CheatCell;

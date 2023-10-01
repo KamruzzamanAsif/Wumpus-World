@@ -39,8 +39,12 @@
     z-index: -1;
 }
 
-.custom-btn:hover:after {
+.custom-btn:active:after {
     transform: translate(0, 0);
+}
+
+.custom-btn:hover {
+    background-color: bisque;
 }
 
 .custom-btn:active {

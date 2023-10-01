@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import "../styles/AgentMode.scss";
 import "../styles/Button.css";
@@ -11,7 +12,6 @@ import useSound from "use-sound";
 import goldCollectSound from "../assets/audio/coin_punch.wav";
 import shootSound from "../assets/audio/scream.mp3";
 import loseSound from "../assets/loseSound.mp3";
-import movementSound from "../assets/movementSound.mp3";
 import playSound from "../assets/playSound.mp3";
 import winSound from "../assets/winSound.mp3";
 
@@ -29,11 +29,11 @@ const Grid = () => {
   const [goldCnt, setGoldCnt] = useState(2);
   const [isDareDevilMode, setDareDevilMode] = useState(false);
   const [playBtnSound] = useSound(playSound);
-  const [moveSound] = useSound(movementSound);
   const [coinCollectSound] = useSound(goldCollectSound);
   const [winningSound] = useSound(winSound);
   const [losingSound] = useSound(loseSound);
   const [shootingSound] = useSound(shootSound);
+  const [hoveredCell, setHoveredCell] = useState({ x: null, y: null });
   let latestWumpus = wumpusCnt;
   let latestPit = pitCnt;
   let latestGold = goldCnt;
@@ -88,6 +88,10 @@ const Grid = () => {
 
     play.setDifficultyMode(difficultyMode);
   }
+
+  const handleHover = (x, y, isHovered) => {
+    setHoveredCell({ x, y, isHovered });
+  };
 
   const uploadBoard = (e) => {
     resetBoard();
@@ -154,7 +158,6 @@ const Grid = () => {
     //! this is must to recursively run the agent after a specific interval
     async function makeNextMove() {
       if (isMoving > 0 && !play.isGameOver()) {
-        //!shoot sound needs fixing
         // setShotFired(false);
         // ****** NEW GAME ********
         // moveSound();
@@ -170,7 +173,6 @@ const Grid = () => {
         isMoving = isMoving - 1;
         if (play.isGoldFound) {
           setFinalMessage(play.discoveredGold + " Gold Discovered");
-          // play.isGoldFound = false;
         }
 
         // Wait for a short period before making the next move
@@ -231,6 +233,7 @@ const Grid = () => {
     console.log("A: ", play.isShoot);
     if (play.isShoot) {
       shootingSound();
+      play.isShoot = false;
     }
   }, [play.isShoot, shootingSound]);
 
@@ -286,9 +289,9 @@ const Grid = () => {
         </div>
         <div className="left-bottom-container">
           <div className="gameState">
-            <div className="inputBtn">
+            <div className="inputSection">
               <div className="valueCover">
-                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                <h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
                   Wumpus Count 😈
                 </h2>
                 <div className="value">{wumpusCnt}</div>
@@ -302,7 +305,7 @@ const Grid = () => {
                 />
               </div>
               <div className="valueCover">
-                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                <h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
                   Pit Count 🕳️
                 </h2>
                 <div className="value">{pitCnt}</div>
@@ -316,7 +319,7 @@ const Grid = () => {
                 />
               </div>
               <div className="valueCover">
-                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                <h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
                   Gold Count 🧈
                 </h2>
                 <div className="value">{goldCnt}</div>
@@ -330,7 +333,7 @@ const Grid = () => {
                 />
               </div>
               <div className="valueCover">
-                <h2 style={{ fontSize: "1.4rem", fontWeight: "bold" }}>
+                <h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
                   Daredevil Mode 🥷
                 </h2>
                 <div className="toggle">
@@ -395,11 +398,10 @@ const Grid = () => {
             </h2>
           </div>
         </div>
-
-        <div>
+        <div className="message-box">
           <h2
             className="alert-box"
-            style={{ color: "black", marginTop: "2rem" }}
+            style={{ color: "black" }}
           >
             {finalMessage}
           </h2>
