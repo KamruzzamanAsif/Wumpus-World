@@ -10,3 +10,7 @@ Currently, two official plugins are available:
 # Run
 
 `npm run dev`
+
+
+# Live 
+https://wumpus-world-ai.netlify.app/ 

@@ -60,15 +60,15 @@ function Cell({ id, cheatMode, x, y }) {
       id = "TBG";
     }
 
-    imgid = `src/assets/${id}.png`;
+    imgid = `/assets/${id}.png`;
     imageSize = 50;
   } else {
-    imgid = `src/assets/${id}.png`;
+    imgid = `/assets/${id}.png`;
     imageSize = 50;
   }
 
   if (id == 0) {
-    imgid = `src/assets/S.png`;
+    imgid = `/assets/S.png`;
     imageSize = 50;
   }
 
@@ -94,7 +94,7 @@ function Cell({ id, cheatMode, x, y }) {
 
   // If cheatMode is true and id is not 'A', show a closed cell
   if (cheatMode && id !== "A" && !play.cellVisited[x][y]) {
-    imgid = "src/assets/cover.png";
+    imgid = "/assets/cover.png";
     imageSize = 65;
   }
 
