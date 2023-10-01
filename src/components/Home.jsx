@@ -112,7 +112,7 @@ const Grid = () => {
       const lines = data.split("\n"); // Split the data into lines
 
       // Process each line
-      for (let i = 0; i < lines.length - 2; i++) {
+      for (let i = 0; i < lines.length - 1; i++) {
         const line = lines[i];
         const row = [];
 
@@ -298,7 +298,7 @@ const Grid = () => {
                 <input
                   type="range"
                   min="1"
-                  max="5"
+                  max="50"
                   step="1"
                   value={wumpusCnt}
                   onChange={handleWumpusCnt}
@@ -312,7 +312,7 @@ const Grid = () => {
                 <input
                   type="range"
                   min="1"
-                  max="10"
+                  max="50"
                   step="1"
                   value={pitCnt}
                   onChange={handlePitCnt}
@@ -326,7 +326,7 @@ const Grid = () => {
                 <input
                   type="range"
                   min="1"
-                  max="5"
+                  max="50"
                   step="1"
                   value={goldCnt}
                   onChange={handleGoldCnt}
@@ -399,10 +399,7 @@ const Grid = () => {
           </div>
         </div>
         <div className="message-box">
-          <h2
-            className="alert-box"
-            style={{ color: "black" }}
-          >
+          <h2 className="alert-box" style={{ color: "black" }}>
             {finalMessage}
           </h2>
         </div>
