@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/AgentMode.scss";
 import "../styles/Button.css";
 import "../styles/Grid.css";
@@ -8,10 +8,11 @@ import CheatCell from "./CheatCell";
 import { play } from "./Play";
 
 import useSound from "use-sound";
+import goldCollectSound from "../assets/audio/coin_punch.wav";
+import shootSound from "../assets/audio/scream.mp3";
 import loseSound from "../assets/loseSound.mp3";
 import movementSound from "../assets/movementSound.mp3";
 import playSound from "../assets/playSound.mp3";
-import shootSound from "../assets/shootSound.mp3";
 import winSound from "../assets/winSound.mp3";
 
 /**
@@ -29,6 +30,7 @@ const Grid = () => {
   const [isDareDevilMode, setDareDevilMode] = useState(false);
   const [playBtnSound] = useSound(playSound);
   const [moveSound] = useSound(movementSound);
+  const [coinCollectSound] = useSound(goldCollectSound);
   const [winningSound] = useSound(winSound);
   const [losingSound] = useSound(loseSound);
   const [shootingSound] = useSound(shootSound);
@@ -126,12 +128,10 @@ const Grid = () => {
         console.log("FILE: ", newBoard);
         play.resetGameEnvironment();
         play.setBoard(newBoard);
-        console.log(
-          play.wumpusCount,
-          play.pitCount,
-          play.goldCount,
-          play.difficulty
-        );
+
+        setWumpusCnt(play.wumpusCount);
+        setPitCnt(play.pitCount);
+        setGoldCnt(play.goldCount);
         setBoard([...play.getBoard()]);
         // TODO: Update board with given one
       }
@@ -170,7 +170,7 @@ const Grid = () => {
         isMoving = isMoving - 1;
         if (play.isGoldFound) {
           setFinalMessage(play.discoveredGold + " Gold Discovered");
-          play.isGoldFound = false;
+          // play.isGoldFound = false;
         }
 
         // Wait for a short period before making the next move
@@ -225,6 +225,22 @@ const Grid = () => {
     pitProb.push(row);
     wumpusProb.push(row2);
   }
+
+  useEffect(() => {
+    // Play shootingSound when play.isShoot is true
+    console.log("A: ", play.isShoot);
+    if (play.isShoot) {
+      shootingSound();
+    }
+  }, [play.isShoot, shootingSound]);
+
+  useEffect(() => {
+    console.log("COINT: ", play.isGoldFound);
+    if (play.isGoldFound) {
+      coinCollectSound();
+      play.isGoldFound = false;
+    }
+  }, [play.isGoldFound, coinCollectSound]);
 
   // view
   return (

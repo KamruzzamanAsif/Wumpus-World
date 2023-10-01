@@ -271,7 +271,7 @@ export class Play {
       this.busy = true;
       this.discoveredGold += 1;
       this.point += 1000;
-      this.isGoldFound = true;
+      this.isGoldFound = !this.isGoldFound;
 
       // this will execute a bit later, so that we can see the gold being taken
       setTimeout(() => {
